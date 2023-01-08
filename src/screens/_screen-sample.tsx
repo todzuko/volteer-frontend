@@ -8,7 +8,7 @@ import {NavioScreen} from 'rn-navio';
 import {services, useServices} from '../services';
 // import {useStores} from '../stores';
 import {Section} from '../components/section';
-import {BButton} from '../components/button';
+import {DefaultButton} from '../components/button';
 import {useAppearance} from '../utils/hooks';
 
 export type Props = {
@@ -47,12 +47,12 @@ export const Example: NavioScreen<Props> = observer(({type = 'push'}) => {
     <View flex bg-bgColor>
       <ScrollView contentInsetAdjustmentBehavior="always">
         <Section title={t.do('section.navio.title')}>
-          <BButton marginV-s1 label={t.do('section.navio.button.push')} onPress={push} />
-          <BButton marginV-s1 label={t.do('section.navio.button.push_stack')} onPress={pushStack} />
-          <BButton marginV-s1 label={t.do('section.navio.button.jump_to')} onPress={jumpTo} />
-          <BButton marginV-s1 label={t.do('section.navio.button.show')} onPress={show} />
-          <BButton marginV-s1 label={t.do('section.navio.button.back')} onPress={goBack} />
-          <BButton marginV-s1 label={'Set Root - Tabs'} onPress={setRoot} />
+          <DefaultButton marginV-s1 label={t.do('section.navio.button.push')} onPress={push} />
+          <DefaultButton marginV-s1 label={t.do('section.navio.button.push_stack')} onPress={pushStack} />
+          <DefaultButton marginV-s1 label={t.do('section.navio.button.jump_to')} onPress={jumpTo} />
+          <DefaultButton marginV-s1 label={t.do('section.navio.button.show')} onPress={show} />
+          <DefaultButton marginV-s1 label={t.do('section.navio.button.back')} onPress={goBack} />
+          <DefaultButton marginV-s1 label={'Set Root - Tabs'} onPress={setRoot} />
         </Section>
       </ScrollView>
     </View>

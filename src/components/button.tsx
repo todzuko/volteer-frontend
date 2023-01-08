@@ -7,11 +7,11 @@ type Props = MarginModifiers & {
   onPress?: PureFunc;
 };
 
-export const BButton: React.FC<Props> = ({label, onPress, ...modifiers}) => {
+export const DefaultButton: React.FC<Props> = ({label, onPress, ...modifiers}) => {
   return (
     <View {...modifiers}>
       <Bounceable onPress={onPress}>
-        <View center bg-primary padding-s4 br40>
+        <View center bg-primary padding-s2 br20>
           <Text text65M _white>
             {label}
           </Text>

@@ -7,6 +7,7 @@ import {Example} from './_screen-sample';
 
 import {useAppearance} from '../utils/hooks';
 import {screenDefaultOptions, tabDefaultOptions, getTabBarIcon} from '../utils/designSystem';
+import {Login} from "./login";
 
 // NAVIO
 export const navio = Navio.build({
@@ -14,6 +15,7 @@ export const navio = Navio.build({
     Main,
     Settings,
     Example,
+    Login,
     Playground: {
       component: Playground,
       options: () => ({
@@ -44,6 +46,13 @@ export const navio = Navio.build({
       stack: ['Settings'],
       options: () => ({
         title: 'Settings',
+        tabBarIcon: getTabBarIcon('SettingsTab'),
+      }),
+    },
+    LoginTab: {
+      stack: ['Login'],
+      options: () => ({
+        title: 'Login',
         tabBarIcon: getTabBarIcon('SettingsTab'),
       }),
     },

@@ -11,7 +11,7 @@ import {NavioScreen} from 'rn-navio';
 import {services, useServices} from '../services';
 import {useStores} from '../stores';
 import {Section} from '../components/section';
-import {BButton, HeaderButton} from '../components/button';
+import {DefaultButton, HeaderButton} from '../components/button';
 import {Reanimated2} from '../components/reanimated2';
 import {Row} from '../components/row';
 import {useAppearance} from '../utils/hooks';
@@ -81,11 +81,11 @@ export const Main: NavioScreen = observer(({}) => {
         </Section>
 
         <Section title={t.do('section.navio.title')}>
-          <BButton marginV-s1 label={t.do('section.navio.button.push')} onPress={push} />
-          <BButton marginV-s1 label={t.do('section.navio.button.push_stack')} onPress={pushStack} />
-          <BButton marginV-s1 label={t.do('section.navio.button.jump_to')} onPress={jumpTo} />
-          <BButton marginV-s1 label={t.do('section.navio.button.show')} onPress={show} />
-          <BButton marginV-s1 label={'Set Root - Stack'} onPress={setRoot} />
+          <DefaultButton marginV-s1 label={t.do('section.navio.button.push')} onPress={push} />
+          <DefaultButton marginV-s1 label={t.do('section.navio.button.push_stack')} onPress={pushStack} />
+          <DefaultButton marginV-s1 label={t.do('section.navio.button.jump_to')} onPress={jumpTo} />
+          <DefaultButton marginV-s1 label={t.do('section.navio.button.show')} onPress={show} />
+          <DefaultButton marginV-s1 label={'Set Root - Stack'} onPress={setRoot} />
         </Section>
 
         <Section title="Reanimated 2">
@@ -108,15 +108,15 @@ export const Main: NavioScreen = observer(({}) => {
             </Text>
 
             <Row>
-              <BButton margin-s1 label=" - " onPress={handleCounterDec} />
-              <BButton margin-s1 label=" + " onPress={handleCounterInc} />
-              <BButton margin-s1 label="reset" onPress={handleCounterReset} />
+              <DefaultButton margin-s1 label=" - " onPress={handleCounterDec} />
+              <DefaultButton margin-s1 label=" + " onPress={handleCounterInc} />
+              <DefaultButton margin-s1 label="reset" onPress={handleCounterReset} />
             </Row>
           </View>
         </Section>
 
         <Section title="API">
-          <BButton margin-s1 label="Update counter value from API" onPress={getCounterValue} />
+          <DefaultButton margin-s1 label="Update counter value from API" onPress={getCounterValue} />
         </Section>
       </ScrollView>
     </View>

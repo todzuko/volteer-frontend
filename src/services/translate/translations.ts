@@ -19,6 +19,9 @@ export const en = {
         back: '← Back',
       },
     },
+    volteer: {
+      login: 'Login'
+    }
   },
 };
 
@@ -42,6 +45,9 @@ export const de = {
         back: '← Zurück',
       },
     },
+    volteer: {
+      login: 'Login'
+    }
   },
 };
 
@@ -65,5 +71,8 @@ export const ru = {
         back: '← Назад',
       },
     },
+    volteer: {
+      login: 'Login'
+    }
   },
 };
