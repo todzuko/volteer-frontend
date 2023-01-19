@@ -5,8 +5,8 @@ import {Text, View} from 'react-native-ui-lib';
 import {FlashList} from '@shopify/flash-list';
 import {observer} from 'mobx-react';
 
-import {useAppearance} from '../utils/hooks';
-import {randomStr} from '../utils/help';
+import {useAppearance} from '../../utils/hooks';
+import {randomStr} from '../../utils/help';
 
 export const Playground: React.FC = observer(() => {
   useAppearance();

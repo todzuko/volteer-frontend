@@ -5,11 +5,11 @@ import {observer} from 'mobx-react';
 import {useNavigation} from '@react-navigation/native';
 import {NavioScreen} from 'rn-navio';
 
-import {services, useServices} from '../services';
+import {services, useServices} from '../../services';
 // import {useStores} from '../stores';
-import {Section} from '../components/section';
-import {DefaultButton} from '../components/button';
-import {useAppearance} from '../utils/hooks';
+import {Section} from '../../components/section';
+import {DefaultButton} from '../../components/button';
+import {useAppearance} from '../../utils/hooks';
 
 export type Props = {
   type?: 'push';

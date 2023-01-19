@@ -1,13 +1,14 @@
 import {Navio} from 'rn-navio';
 
-import {Main} from './main';
-import {Playground} from './playground';
-import {Settings} from './settings';
-import {Example} from './_screen-sample';
+import {Main} from '../base/main';
+import {Playground} from '../base/playground';
+import {Settings} from '../base/settings';
+import {Example} from '../base/_screen-sample';
 
-import {useAppearance} from '../utils/hooks';
-import {screenDefaultOptions, tabDefaultOptions, getTabBarIcon} from '../utils/designSystem';
-import {Login} from "./login";
+import {useAppearance} from '../../utils/hooks';
+import {screenDefaultOptions, tabDefaultOptions, getTabBarIcon} from '../../utils/designSystem';
+import {Login} from "../base/login";
+import {UserList} from "../user/userList";
 
 // NAVIO
 export const navio = Navio.build({
@@ -16,6 +17,7 @@ export const navio = Navio.build({
     Settings,
     Example,
     Login,
+    UserList,
     Playground: {
       component: Playground,
       options: () => ({
@@ -50,10 +52,17 @@ export const navio = Navio.build({
       }),
     },
     LoginTab: {
-      stack: ['Login'],
+      stack: ['Login', 'UserList'],
       options: () => ({
         title: 'Login',
         tabBarIcon: getTabBarIcon('SettingsTab'),
+      }),
+    },
+    UserListTab: {
+      stack: ['UserList'],
+      options: () => ({
+        title: 'Users',
+        tabBarIcon: getTabBarIcon('PlaygroundTab'),
       }),
     },
   },
@@ -70,3 +79,4 @@ export const navio = Navio.build({
 
 export const getNavio = () => navio;
 export const AppRoot = navio.Root;
+

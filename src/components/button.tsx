@@ -11,8 +11,8 @@ export const DefaultButton: React.FC<Props> = ({label, onPress, ...modifiers}) =
   return (
     <View {...modifiers}>
       <Bounceable onPress={onPress}>
-        <View center bg-primary padding-s2 br20>
-          <Text text65M _white>
+        <View center bg-primary padding-s2 br100>
+          <Text text65M _black>
             {label}
           </Text>
         </View>

@@ -14,11 +14,12 @@ import {Appearance} from './types/enums';
 // =============
 
 const colors = {
-  primary: '#2e6365', // blue
-  secondary: '#487e77', // green
+  primary: '#B3ABFF', // blue
+  secondary: '#B3ABFF', // green
   accent: '#895f94', // yellow
-  _black: Colors.rgba(20, 20, 20, 1),
-  _black2: Colors.rgba(50, 50, 50, 1),
+  _black: '#303034',
+  _black2: '#2b2b2d',
+  _whiteText: '#e3e7ea',
   _white: Colors.rgba(250, 250, 250, 1),
   _white2: Colors.rgba(230, 230, 230, 1),
 };
@@ -31,7 +32,7 @@ const themes: Record<Appearance, ThemeColors> = {
     bg2Color: colors._white2,
   },
   dark: {
-    textColor: colors._white,
+    textColor: colors._whiteText,
     bgColor: colors._black,
     bg2Color: colors._black2,
   },
