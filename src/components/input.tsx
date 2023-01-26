@@ -8,11 +8,11 @@ type Props = MarginModifiers & {
 };
 
 
-export const TextInput: React.FC<Props> = ({label, onPress, ...modifiers}) => {
+export const TextInput: React.FC<Props> = (props: {label:string, onPress:any}) => {
     // @ts-ignore
     // @ts-ignore
     return (
-        <View {...modifiers}>
+        <View>
 
             <TextField
                 // value={this.state.value}
@@ -33,10 +33,10 @@ export const TextInput: React.FC<Props> = ({label, onPress, ...modifiers}) => {
 };
 
 
-export const InputField: React.FC<Props> = () => {
+export const InputField= (props: any) => {
     return (
         <TextField
-            placeholder={'Placeholder'}
+            placeholder={props.placeholder}
             floatingPlaceholder
             onChangeText={() => console.log('changed')}
             enableErrors

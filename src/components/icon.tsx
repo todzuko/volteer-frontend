@@ -1,6 +1,6 @@
 import React, {useMemo} from 'react';
 import {View, Colors, ViewProps} from 'react-native-ui-lib';
-import {Ionicons} from '@expo/vector-icons';
+import {Octicons} from '@expo/vector-icons';
 import {Bounceable} from 'rn-bounceable';
 
 type IconProps = {
@@ -14,14 +14,14 @@ type IconProps = {
 
 const ICON_SIZE = 26;
 
-export const IconComponent = Ionicons;
+export const IconComponent = Octicons;
 export const Icon: React.FC<IconProps> = ({
   name,
   size = ICON_SIZE,
   color = Colors.textColor,
   viewProps,
   onPress,
-  bounceable = true,
+  bounceable = false,
 }: IconProps) => {
   const Icon = useMemo(
     () => (

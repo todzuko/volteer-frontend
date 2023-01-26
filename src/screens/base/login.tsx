@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import {ScrollView} from 'react-native';
-import {View} from 'react-native-ui-lib';
+import {Text, View} from 'react-native-ui-lib';
 import {Button} from 'react-native-ui-lib';
 import {observer} from 'mobx-react';
 import {useNavigation} from '@react-navigation/native';
@@ -42,12 +42,13 @@ export const Login: React.FC = observer(() => {
     // UI Methods
 
     return (<View flex bg-bgColor>
-        <Button marginV-s1 label={'push screen'} onPress={push} />
+        <Button marginV-s1 marginH-s5 label={'Список'} onPress={push} />
         <Formik initialValues={{email: ''}}
                 onSubmit={values => console.log(values)}>
             <Section title={t.do('section.volteer.login')}>
-            <InputField/>
-            <Button marginV-s1 label={'Login'} onPress={ () => {}}/>
+                <InputField placeholder={'Логин'}/>
+                <InputField placeholder={'Пароль'}/>
+                <Button marginV-s4 label={'Войти'} onPress={ () => {}}/>
                 {/*text - forgot password?*/}
             </Section>
         </Formik>
