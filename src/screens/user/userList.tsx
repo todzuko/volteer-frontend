@@ -1,38 +1,53 @@
-import React, {useMemo} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {Button, Text, View} from 'react-native-ui-lib';
 import {FlashList} from '@shopify/flash-list';
 import {observer} from 'mobx-react';
 
 import {useAppearance} from '../../utils/hooks';
 import {randomStr} from '../../utils/help';
-import {StyleSheet} from "react-native";
-import ListItem from "../../components/listItem";
+import {ListIconItem} from "../../components/listItem";
 import {useNavigation} from "@react-navigation/native";
 import {useServices} from "../../services";
 
 export const UserList: React.FC = observer(() => {
     useAppearance();
+    const {navio} = useServices();
 
-    const DATA = useMemo(
-        () =>
-            Array.from({length: 10}).map((v, ndx) => ({
-                title: `Item ${ndx}`,
-                text: 'item text here',
-                description: randomStr(100),
-                name: 'UserName',
-                email: 'email',
-                index: 1,
-            })),
-        [],
-    );
+    type User = {
+        // id: string
+        name: string;
+        role: string;
+    };
 
+    const [isLoading, setLoading] = useState(true);
+    const [data, setData] = useState<User[]>([]);
+
+    const getUsers = async () => {
+        try {
+            const response = await fetch('http://192.168.1.103:3000/users/');
+            const json = await response.json();
+            // console.log(json);
+            setData(json);
+            console.log(data);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        getUsers();
+    }, []);
+
+    const pushForm = () => navio.push('UserForm');
     return (
         <View flex bg-bgColor>
             <Text>Всего: 10</Text>
-            <Button marginV-s3 marginH-s10 label={'Добавить'}></Button>
+            <Button marginV-s3 marginH-s10 label={'Добавить'} onPress={pushForm}></Button>
             <FlashList
                 contentInsetAdjustmentBehavior="always"
-                data={DATA}
+                data={data}
                 renderItem={({item}) => <Item item={item}/>}
                 // ListHeaderComponent={ListHeader}
                 estimatedItemSize={300}
@@ -53,12 +68,11 @@ const Item = ({item}: any) => {
 
     // Methods
 
-    const push = () => navio.push('UserForm');
+    const pushForm = () => navio.push('UserForm');
     return (
         <View>
-            <Button label={'test'} onPress={push}></Button>
-            <ListItem text={item.text} title={item.title} iconName={'pencil'} iconSize={22} iconColor={'#448180'}
-                      iconPress={push}/>
+            <ListIconItem text={item.role} title={item.name} iconName={'pencil'} iconSize={22} iconColor={'#939393'}
+                      iconPress={pushForm}/>
         </View>
     );
 };

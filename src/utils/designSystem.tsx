@@ -153,6 +153,7 @@ export const screenDefaultOptions = (): NativeStackNavigationOptions => ({
 
 export const tabDefaultOptions = (): BottomTabNavigationOptions => ({
   headerShown: false,
+  tabBarShowLabel: false,
   tabBarActiveTintColor: Colors.primary,
   tabBarInactiveTintColor: Colors.grey40,
   tabBarStyle: {backgroundColor: Colors.bgColor, borderTopWidth: 0, elevation: 0},
@@ -161,17 +162,17 @@ export const tabDefaultOptions = (): BottomTabNavigationOptions => ({
 export const getTabBarIcon =
   (tabName: string) =>
   ({focused, color, size}: {focused: boolean; color: string; size: number}) =>
-    <Icon name={getTabIconName(tabName, focused)} size={size} color={color} />;
+    <Icon name={getTabIconName(tabName, focused)} size={20} color={color} />;
 
 const getTabIconName = (tabName: string, focused: boolean): string => {
   if (tabName === 'MainTab') {
-    return focused ? 'home' : 'home-outline';
-  }
-  if (tabName === 'PlaygroundTab') {
-    return focused ? 'construct' : 'construct-outline';
+    return 'home';
   }
   if (tabName === 'SettingsTab') {
-    return focused ? 'settings' : 'settings-outline';
+    return 'gear';
+  }
+  if (tabName === 'UserListTab') {
+    return 'person';
   }
 
   return 'list';

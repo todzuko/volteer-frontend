@@ -10,10 +10,15 @@ import {screenDefaultOptions, tabDefaultOptions, getTabBarIcon} from '../../util
 import {Login} from "../base/login";
 import {UserList} from "../user/userList";
 import {UserForm} from "../user/userForm";
+import {SearchList} from "../search/searchList";
+import {SearchForm} from "../search/searchForm";
+import { SearchDetail } from '../search/searchDetail';
+import { SearchManagment } from '../search/searchManagment';
 
 // NAVIO
 
 console.log(getTabBarIcon('MainTab'))
+// @ts-ignore
 export const navio = Navio.build({
   screens: {
     Main,
@@ -22,6 +27,10 @@ export const navio = Navio.build({
     Login,
     UserList,
     UserForm,
+    SearchList,
+    SearchForm,
+    SearchDetail,
+    SearchManagment,
     Playground: {
       component: Playground,
       options: () => ({
@@ -30,12 +39,13 @@ export const navio = Navio.build({
     },
   },
   stacks: {
-    MainStack: ['Main', 'Example'],
+    SearchStack: ['SearchList', 'SearchForm', 'SearchDetail', 'SearchManagment'],
     ExampleStack: ['Example'],
+    UserStack: ['Login', 'UserList', 'UserForm'],
   },
   tabs: {
     MainTab: {
-      stack: 'MainStack',
+      stack: 'SearchStack',
       options: {
         title: '',
         tabBarIcon: getTabBarIcon('MainTab'),
@@ -50,19 +60,12 @@ export const navio = Navio.build({
       }),
     },
     LoginTab: {
-      stack: ['Login', 'UserList', 'UserForm'],
+      stack: 'UserStack',
       options: () => ({
         title: '',
         tabBarIcon: getTabBarIcon('SettingsTab'),
       }),
     },
-    // UserListTab: {
-    //   stack: ['UserList'],
-    //   options: () => ({
-    //     title: '',
-    //     tabBarIcon: getTabBarIcon('UserListTab'),
-    //   }),
-    // },
   },
   modals: {
     ExampleModal: 'ExampleStack',

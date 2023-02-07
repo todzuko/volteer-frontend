@@ -1,9 +1,7 @@
 import React, {useState} from 'react';
-import {View, Text, MarginModifiers, Incubator} from 'react-native-ui-lib';
-import {StyleSheet} from "react-native";
+import {View, Text, MarginModifiers} from 'react-native-ui-lib';
+import {StyleSheet} from 'react-native';
 import {IconButton} from "./iconButton";
-import {Icon} from "./icon";
-const {TextField} = Incubator;
 
 type Props = MarginModifiers & {
     label?: string;
@@ -11,15 +9,26 @@ type Props = MarginModifiers & {
 };
 
 
-const ListItem= (props: { title: any; text: any; iconName: string, iconSize: number, iconColor: string, iconPress:any}) => {
+export const ListIconItem = (props: { title: any, text: any, iconName: string, iconSize: number, iconColor: string, iconPress: any }) => {
     return (
-            <View style={ListStyle.item}>
-                <View style={ListStyle.textBlock}>
-                <Text style={ListStyle.itemTitle}  marginL-10>{ props.title }</Text>
-                <Text style={ListStyle.itemText} marginL-10>{ props.text }</Text>
-                </View>
-                <Icon onPress={props.iconPress} name={props.iconName} size={props.iconSize} color={props.iconColor}></Icon>
+        <View style={ListStyle.item}>
+            <View style={ListStyle.textBlock}>
+                <Text style={ListStyle.itemTitle} marginL-10>{props.title}</Text>
+                <Text style={ListStyle.itemText} marginL-10>{props.text}</Text>
             </View>
+            <IconButton name={props.iconName} size={props.iconSize} color={props.iconColor}
+                        press={props.iconPress}></IconButton>
+        </View>
+    );
+}
+export const ListItem = (props: { title: any, text: any, }) => {
+    return (
+        <View style={ListStyle.item}>
+            <View style={ListStyle.textBlock}>
+                <Text style={ListStyle.itemTitle} marginL-10>{props.title}</Text>
+                <Text style={ListStyle.itemText} marginL-10>{props.text}</Text>
+            </View>
+        </View>
     );
 }
 
@@ -43,13 +52,11 @@ const ListStyle = StyleSheet.create({
     itemText: {
         fontSize: 14,
         border: 'none',
-        color:'#b0b0b0',
+        color: '#b0b0b0',
     },
     itemTitle: {
         fontSize: 16,
         border: 'none',
-        color:'#e1e1e1',
+        color: '#e1e1e1',
     }
 });
-
-export default ListItem;

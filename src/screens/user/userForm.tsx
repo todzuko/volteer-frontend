@@ -4,23 +4,20 @@
 //password
 //roles
 
-import React, {useEffect} from 'react';
-import {ScrollView} from 'react-native';
+import React, {useEffect, useState} from 'react';
 import {Text, View} from 'react-native-ui-lib';
 import {Button} from 'react-native-ui-lib';
 import {observer} from 'mobx-react';
 import {useNavigation} from '@react-navigation/native';
-import {NavioScreen} from 'rn-navio';
 
 import {services, useServices} from '../../services';
-import {useStores} from '../../stores';
 import {Section} from '../../components/section';
-import {DefaultButton} from '../../components/button';
 import {useAppearance} from '../../utils/hooks';
-import {InputField, TextInput} from "../../components/input";
-import {Form} from "formik";
+import {InputField} from "../../components/input/input";
 import { Formik } from 'formik';
 import {getNavio} from "../navigation";
+import {Alert, TextInput} from "react-native";
+import {Picker} from "@react-native-picker/picker";
 
 
 export const UserForm: React.FC = observer(() => {
@@ -29,9 +26,42 @@ export const UserForm: React.FC = observer(() => {
     const {t, navio} = useServices();
     // const {ui} = useStores();
 
-    // State
+    const [name, setName] = useState('');
+    const [login, setLogin] = useState('');
+    const [password, setPassword] = useState('');
+    const [selectedRole, setSelectedRole] = useState('');
+
+    const roles = [
+        { label: 'Select a role', value: '' },
+        { label: 'Admin', value: 'admin' },
+        { label: 'User', value: 'user' },
+    ];
 
     // Methods
+    const handleSubmit = async () => {
+        try {
+            const response = await fetch('http://192.168.1.103:3000/users/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name, login, password, role: selectedRole }),
+            });
+            const data = await response.json();
+            console.log(data);
+
+            Alert.alert(
+                'Success',
+                'Your data was successfully submitted.',
+                [
+                    { text: 'OK', onPress: () => {} },
+                ],
+                { cancelable: false },
+            );
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     const push = () => navio.push('UserList');
     // Start
@@ -51,11 +81,27 @@ export const UserForm: React.FC = observer(() => {
         <Formik initialValues={{email: ''}}
                 onSubmit={values => console.log(values)}>
             <Section title={'Редактирование'}>
-                <InputField placeholder={'Имя'}/>
-                <InputField placeholder={'Логин'}/>
-                <Text>Change password (link)</Text>
-                {/*<InputField placeholder={'Password'}/>*/}
-                <Button marginV-s4 label={'Сохранить'} onPress={ () => {}}/>
+                <InputField placeholder={'Имя'} value={name}
+                            onChangeText={(text: React.SetStateAction<string>) => {
+                                setName(text);
+                            }} />
+                <InputField placeholder={'Логин'}  value={login}
+                            onChangeText={(text: React.SetStateAction<string>) => setLogin(text)} />
+                {/*<Text>Change password (link)</Text>*/}
+                <InputField placeholder={'Password'}  value={password}
+                            onChangeText={(text: React.SetStateAction<string>) => setPassword(text)}
+                            secureTextEntry={true} />
+                <Text>Roles:</Text>
+                <Picker
+                    selectedValue={selectedRole}
+                    onValueChange={role => setSelectedRole(role)}
+                >
+                    {roles.map(role => (
+                        <Picker.Item key={role.value} label={role.label} value={role.value} />
+                    ))}
+                </Picker>
+
+                <Button marginV-s4 label={'Сохранить'}  onPress={handleSubmit} />
                 {/*text - forgot password?*/}
             </Section>
         </Formik>

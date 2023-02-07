@@ -1,46 +1,52 @@
-//add or edit user
-//name
-//login
-//password
-//roles
+import React, { useState, useEffect } from 'react';
+import { View, Text, ActivityIndicator } from 'react-native';
 
-import React, {useEffect} from 'react';
-import {Text, View} from 'react-native-ui-lib';
-import {Button} from 'react-native-ui-lib';
-import {observer} from 'mobx-react';
-import {useNavigation} from '@react-navigation/native';
-import {services, useServices} from '../../services';
-import {useAppearance} from '../../utils/hooks';
-import {FlatList} from "react-native";
+type Props = {
+    id: string,
+};
 
+const UserView: React.FC<Props> = ({ id }) => {
+    const [isLoading, setIsLoading] = useState(true);
+    const [data, setData] = useState({
+        roles: undefined,
+        password: undefined,
+        login: undefined,
+        name: undefined
+    });
 
-export const UserView: React.FC = observer(() => {
-    useAppearance(); // for Dark Mode
-    const navigation = useNavigation();
-    const {t, navio} = useServices();
-
-    const push = () => navio.push('UserList');
-    // Start
     useEffect(() => {
-        configureUI();
-    }, []);
+        const fetchData = async () => {
+            try {
+                const response = await fetch(`https://your-api.com/form/${id}`);
+                const formData = await response.json();
 
-    // UI Methods
-    const configureUI = () => {
-        navigation.setOptions({});
-    };
+                setData(formData);
+                setIsLoading(false);
+            } catch (error) {
+                console.error(error);
+                setIsLoading(false);
+            }
+        };
 
-    return (<View flex bg-bgColor>
-       <Text>Name:</Text><Text>props.name</Text>
-       <Text>Login:</Text><Text>props.name</Text>
-       <Text>Roles:</Text>
-        <FlatList
-            data={[
-                {key: 'Новичок'},
-                {key: 'Управляющий'},
-            ]}
-            renderItem={({item}) => <Text >{item.key}</Text>}
-        />
-        <ul></ul>
-    </View>);
-});
+        fetchData();
+    }, [id]);
+
+    if (isLoading) {
+        return (
+            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                <ActivityIndicator size="large" />
+            </View>
+        );
+    }
+
+    return (
+        <View style={{ padding: 16 }}>
+            <Text>Name: {data.name}</Text>
+            <Text>Login: {data.login}</Text>
+            <Text>Password: {data.password}</Text>
+            <Text>Roles: {data.roles}</Text>
+        </View>
+    );
+};
+
+export default UserView;

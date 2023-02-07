@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href='https://fonts.googleapis.com/css?family=Inter' rel='stylesheet'>
+    <style>
+        * {
+            font-family: 'Inter', Arial, serif;
+        }
+
+        /* Page layout */
+        .page {
+            width: 21cm;
+            height: 29.7cm;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .page-body {
+            display: flex;
+            flex-direction: row;
+            border: 1px #a23636;
+        }
+
+        /* Image and links container */
+        .image-container {
+            width: 35%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Text container */
+        .text-container {
+            width: 70%;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        /* Title */
+        .title {
+            font-size: 32px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Text */
+        .text {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+    <div class="title">Title</div>
+    <div class="page-body">
+        <div class="image-container">
+            <img src="your-image-with-watermark.png" alt="Watermark Image">
+            <div>
+                <a href="#">Link 1</a>
+                <br>
+                <a href="#">Link 2</a>
+            </div>
+        </div>
+        <div class="text-container">
+            <div class="text">Field 1 Title: Field 1 Data</div>
+            <div class="text">Field 2 Title: Field 2 Data</div>
+            <div class="text">Field 3 Title: Field 3 Data</div>
+            <div class="text">Field 4 Title: Field 4 Data</div>
+            <div class="text">Field 5 Title: Field 5 Data</div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
