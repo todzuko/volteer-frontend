@@ -69,4 +69,5 @@ const DropdownStyle = StyleSheet.create({
         width: '100%',
         marginBottom: 4,
         marginTop: 8
-    },});
+    },
+});

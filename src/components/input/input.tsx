@@ -15,8 +15,8 @@ export const InputField= (props: any) => {
             enableErrors
             // validate={'required'}
             // validationMessage={['Обязательное поле']}
-            showCharCounter
-            maxLength={30}
+            //showCharCounter
+            maxLength={props.maxLength}
             color={'white'}
             labelColor={'white'}
             value={props.value}

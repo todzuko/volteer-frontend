@@ -1,19 +1,28 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, ScrollView} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {observer} from 'mobx-react';
 import {Section} from '../../components/section';
 import {useAppearance} from '../../utils/hooks';
-import {DetailText} from "../../components/detailText";
 import {Button, Colors} from "react-native-ui-lib";
 import {useServices} from "../../services";
-import {Dropdown} from "../../components/dropdown";
+import {InputModalBlock} from "../../components/input/inputModalBlock";
+import {OptionSheet} from "../../components/input/optionSheet";
+import {IconButton} from "../../components/iconButton";
+import EditUserGroup from "../../components/input/editUserGroup";
 
 // @ts-ignore
 export const SearchManagment: React.FC = observer(({route}) => {
     useAppearance();
     const navigation = useNavigation();
+    const [groups, setGroups] = useState<Group[]>([]);
     const searchId= route.params.searchId;
+    type Group = {
+        id: string
+        title: string,
+        users: object[],
+        color: string,
+    };
     const {navio} = useServices();
     useEffect(() => {
         configureUI();
@@ -21,7 +30,26 @@ export const SearchManagment: React.FC = observer(({route}) => {
     const configureUI = () => {
         navigation.setOptions({});
     };
+    const sampleUsers2 = [
+        {'name': "John Doe"},
+        {'name': "Jane Doe"},
+        {'name': "Jim Smith"}
+    ];
+    const getGroups = async () => {
+        try {
+            const response = await fetch('http://192.168.1.103:3000/groups/');
+            const json = await response.json();
+            console.log(json);
+            setGroups(json);
+        } catch (error) {
+        }
+    };
 
+    useEffect(() => {
+        getGroups();
+    }, []);
+
+//get groups and pass each one to dropdown
     return (
         <ScrollView>
             <Section title={'Группы'}>
@@ -29,9 +57,10 @@ export const SearchManagment: React.FC = observer(({route}) => {
                 <View>
                     <Button marginB-s4 label={'К карте'}></Button>
                 </View>
-                <View>
-                    <Dropdown title={'Дата обращения'} members={['group', 'member1']}></Dropdown>
-                </View>
+                    {groups.map((group) => (
+                        <InputModalBlock title={'title'} group={group}></InputModalBlock>
+                    ))}
+
                 <View style={detailStyle.buttonContainer}>
                     {/*<Button label={'Изменить группы'} style={detailStyle.flexButton} onPress={()=>{}}></Button>*/}
                     <Button label={'+'} onPress={()=>{}}></Button>
