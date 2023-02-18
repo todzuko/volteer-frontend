@@ -60,9 +60,9 @@ export const InputModalBlock: React.FC<Props> = ({title, group}) => {
         : (
             <TouchableWithoutFeedback onLongPress={handleLongPress}>
                 <View style={DropdownStyle.container}>
-                    <Pressable onLongPress={handleLongPress}
+                    <Pressable style={DropdownStyle.arrowHeader} onLongPress={handleLongPress}
                                onPress={() => setIsVisible(!isVisible)}>
-                        <View style={DropdownStyle.color}></View>
+                        {/*<View style={DropdownStyle.color}></View>*/}
                         <Text style={DropdownStyle.title} value={title}>{title}</Text>
                         <Text style={DropdownStyle.arrow}>
                             {isVisible ? '▲' : '▼'}
@@ -118,6 +118,7 @@ const DropdownStyle = StyleSheet.create({
         color: '#e1e1e1',
         marginTop: 0,
         height: 44,
+        paddingTop: 6
     },
     member: {
         fontSize: 14,
@@ -141,5 +142,11 @@ const DropdownStyle = StyleSheet.create({
         width: 5,
         borderRadius: 3,
         color: '#848467',
+    },
+    arrowHeader: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
     }
 });

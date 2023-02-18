@@ -41,7 +41,7 @@ export const navio = Navio.build({
   stacks: {
     SearchStack: ['SearchList', 'SearchForm', 'SearchDetail', 'SearchManagment'],
     ExampleStack: ['Example'],
-    UserStack: ['Login', 'UserList', 'UserForm'],
+    UserStack: ['UserList', 'UserForm'],
   },
   tabs: {
     MainTab: {
