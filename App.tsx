@@ -1,50 +1,64 @@
-import 'expo-dev-client';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useMemo, useState} from 'react';
 import {LogBox} from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
-
-import {AppRoot} from './src/screens/navigation';
 import {
-  configureDesignSystem,
-  getNavigationTheme,
-  getStatusBarBGColor,
-  getStatusBarStyle,
+    configureDesignSystem,
+    getNavigationTheme,
+    getStatusBarBGColor,
+    getStatusBarStyle
 } from './src/utils/designSystem';
 import {hydrateStores} from './src/stores';
-import {initServices} from './src/services';
+import {initServices, services, useServices} from './src/services';
 import {SSProvider} from './src/utils/providers';
 import {StatusBar} from 'expo-status-bar';
 import {useAppearance} from './src/utils/hooks';
+import {Login} from './src/screens/base/login';
+import {AppRoot} from './src/screens/navigation';
+import VContext from "./VContext";
 
 LogBox.ignoreLogs(['Require']);
 
-export default (): JSX.Element => {
-  useAppearance();
-  const [ready, setReady] = useState(false);
+export default () => {
+    useAppearance();
+    const [ready, setReady] = useState(false);
+    const [loggedIn, setLoggedIn] =  useState(false);//useContext(VContext);
+    const value = useMemo(
+        () => ({loggedIn, setLoggedIn}),
+        [loggedIn, setLoggedIn]
+    );
+    const start = useCallback(async () => {
+        await SplashScreen.preventAutoHideAsync();
 
-  const start = useCallback(async () => {
-    await SplashScreen.preventAutoHideAsync();
+        await hydrateStores();
+        configureDesignSystem();
+        await initServices();
 
-    await hydrateStores();
-    configureDesignSystem();
-    await initServices();
+        setReady(true);
+        await SplashScreen.hideAsync();
+    }, []);
 
-    setReady(true);
-    await SplashScreen.hideAsync();
-  }, []);
+    useEffect(() => {
+        start();
+    }, [start]);
 
-  useEffect(() => {
-    start();
-  }, [start]);
+    if (!ready) return <></>;
 
-  if (!ready) return <></>;
-  return (
-    <GestureHandlerRootView style={{flex: 1}}>
-      <SSProvider>
-        <StatusBar style={getStatusBarStyle()} backgroundColor={getStatusBarBGColor()} />
-        <AppRoot navigationContainerProps={{theme: getNavigationTheme()}} />
-      </SSProvider>
-    </GestureHandlerRootView>
-  );
+    // @ts-ignore
+    return (
+        <GestureHandlerRootView style={{flex: 1}}>
+            <VContext.Provider value={value}>
+                <SSProvider>
+                    {!loggedIn ? (
+                        <Login />
+                    ) : (
+                        <>
+                            <StatusBar style={getStatusBarStyle()} backgroundColor={getStatusBarBGColor()} />
+                            <AppRoot navigationContainerProps={{theme: getNavigationTheme()}} />
+                        </>
+                    )}
+                </SSProvider>
+            </VContext.Provider>
+        </GestureHandlerRootView>
+    );
 };

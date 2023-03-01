@@ -1,10 +1,12 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useState} from 'react';
 import {ScrollView} from 'react-native';
-import {Text, View, SegmentedControl, Colors} from 'react-native-ui-lib';
+import {Text, View, SegmentedControl, Colors, Button} from 'react-native-ui-lib';
 import {observer} from 'mobx-react';
 import {useNavigation} from '@react-navigation/native';
 import {NavioScreen} from 'rn-navio';
-
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Step 1
+import { StackActions } from '@react-navigation/native';
+import { Login } from "./login";
 import {Section} from '../../components/section';
 import {Row} from '../../components/row';
 import {
@@ -16,19 +18,24 @@ import {
   languageUIToInternal,
 } from '../../utils/types/enums';
 import {useAppearance} from '../../utils/hooks';
-import {useStores} from '../../stores';
+import {hydrateStores, useStores} from '../../stores';
 import {HeaderButton} from '../../components/button';
-import {services} from '../../services';
+import {initServices, services} from '../../services';
+import {navio} from "../navigation";
+import * as SplashScreen from "expo-splash-screen";
+import {configureDesignSystem} from "../../utils/designSystem";
+import VContext from "../../../VContext";
 
-export const Settings: NavioScreen = observer(({}) => {
+export const Settings: NavioScreen = observer(({ navigation, route }: any) => {
   useAppearance();
-  const navigation = useNavigation();
+  // const navigation = useNavigation();
   const {ui} = useStores();
 
   // State
   const [appearance, setAppearance] = useState(ui.appearance);
   const [language, setLanguage] = useState(ui.language);
 
+  const { loggedIn, setLoggedIn } = useContext(VContext);
   // Computed
   const unsavedChanges = ui.appearance !== appearance || ui.language !== language;
 
@@ -59,50 +66,70 @@ export const Settings: NavioScreen = observer(({}) => {
     });
   };
 
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.removeItem('accessToken');
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
-    <View flex bg-bgColor>
-      <ScrollView contentInsetAdjustmentBehavior="always">
-        <Section title={'UI'}>
-          <View paddingV-s1>
-            <Row>
-              <View flex>
-                <Text textColor text60R>
-                  Appearance
-                </Text>
-              </View>
+      <View flex bg-bgColor>
+        <ScrollView contentInsetAdjustmentBehavior="always">
+          <Section title={'UI'}>
+            <View paddingV-s1>
+              <Row>
+                <View flex>
+                  <Text textColor text60R>
+                    Appearance
+                  </Text>
+                </View>
 
-              <SegmentedControl
-                initialIndex={appearanceInitialIndex}
-                segments={appearanceSegments}
-                backgroundColor={Colors.bgColor}
-                activeColor={Colors.primary}
-                inactiveColor={Colors.textColor}
-                onChangeIndex={handleAppearanceIndexChange}
-              />
-            </Row>
-          </View>
+                <SegmentedControl
+                    initialIndex={appearanceInitialIndex}
+                    segments={appearanceSegments}
+                    backgroundColor={Colors.bgColor}
+                    activeColor={Colors.primary}
+                    inactiveColor={Colors.textColor}
+                    onChangeIndex={handleAppearanceIndexChange}
+                />
+              </Row>
+            </View>
 
-          <View paddingV-s1>
-            <Row>
-              <View flex>
-                <Text textColor text60R>
-                  Language
-                </Text>
-              </View>
+            <View paddingV-s1>
+              <Row>
+                <View flex>
+                  <Text textColor text60R>
+                    Language
+                  </Text>
+                </View>
 
-              <SegmentedControl
-                initialIndex={languageInitialIndex}
-                segments={languageSegments}
-                backgroundColor={Colors.bgColor}
-                activeColor={Colors.primary}
-                inactiveColor={Colors.textColor}
-                onChangeIndex={handleLanguageIndexChange}
-              />
-            </Row>
-          </View>
-        </Section>
-      </ScrollView>
-    </View>
+                <SegmentedControl
+                    initialIndex={languageInitialIndex}
+                    segments={languageSegments}
+                    backgroundColor={Colors.bgColor}
+                    activeColor={Colors.primary}
+                    inactiveColor={Colors.textColor}
+                    onChangeIndex={handleLanguageIndexChange}
+                />
+              </Row>
+            </View>
+          </Section>
+        </ScrollView>
+
+        <View paddingH-s1 paddingV-s2>
+          <Button
+              onPress={() => {
+                AsyncStorage.setItem('accessToken', '');
+                setLoggedIn(false)
+                console.log('out')
+              }}
+              label="Logout"
+              color={Colors.red20}
+          />
+        </View>
+      </View>
   );
 });
 Settings.options = () => ({
