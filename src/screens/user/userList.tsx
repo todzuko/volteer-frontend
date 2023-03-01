@@ -8,6 +8,7 @@ import {randomStr} from '../../utils/help';
 import {ListIconItem} from "../../components/listItem";
 import {useNavigation} from "@react-navigation/native";
 import {useServices} from "../../services";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const UserList: React.FC = observer(() => {
     useAppearance();
@@ -22,11 +23,16 @@ export const UserList: React.FC = observer(() => {
     const [isLoading, setLoading] = useState(true);
     const [data, setData] = useState<User[]>([]);
 
+
     const getUsers = async () => {
         try {
-            const response = await fetch('http://192.168.1.103:3000/users/');
+            const token = await AsyncStorage.getItem('jwt');
+            const response = await fetch('http://192.168.1.103:3000/users/', {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
             const json = await response.json();
-            // console.log(json);
             setData(json);
             console.log(data);
         } catch (error) {
@@ -35,6 +41,7 @@ export const UserList: React.FC = observer(() => {
             setLoading(false);
         }
     };
+
 
     useEffect(() => {
         getUsers();
@@ -68,11 +75,11 @@ const Item = ({item}: any) => {
 
     // Methods
 
-    const pushForm = () => navio.push('UserForm');
+    const pushForm = () => navio.push('UserForm', {item});
     return (
         <View>
             <ListIconItem text={item.role} title={item.name} iconName={'pencil'} iconSize={22} iconColor={'#939393'}
-                      iconPress={pushForm}/>
+                      iconPress={ pushForm }/>
         </View>
     );
 };

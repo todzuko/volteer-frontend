@@ -7,9 +7,6 @@ import {useAppearance} from '../../utils/hooks';
 import {Button, Colors} from "react-native-ui-lib";
 import {useServices} from "../../services";
 import {InputModalBlock} from "../../components/input/inputModalBlock";
-import {OptionSheet} from "../../components/input/optionSheet";
-import {IconButton} from "../../components/iconButton";
-import EditUserGroup from "../../components/input/editUserGroup";
 
 // @ts-ignore
 export const SearchManagment: React.FC = observer(({route}) => {
@@ -23,6 +20,17 @@ export const SearchManagment: React.FC = observer(({route}) => {
         users: object[],
         color: string,
     };
+
+    const addGroup = () => {
+        const newGroup: Group = {
+            id: '0',
+            name: 'Новая группа',
+            users: [],
+            color: "#000000"
+        };
+        setGroups([...groups, newGroup]);
+    };
+
     const {navio} = useServices();
     useEffect(() => {
         configureUI();
@@ -30,11 +38,7 @@ export const SearchManagment: React.FC = observer(({route}) => {
     const configureUI = () => {
         navigation.setOptions({});
     };
-    const sampleUsers2 = [
-        {'name': "John Doe"},
-        {'name': "Jane Doe"},
-        {'name': "Jim Smith"}
-    ];
+
     const getGroups = async () => {
         try {
             const response = await fetch('http://192.168.1.103:3000/groups/');
@@ -58,12 +62,12 @@ export const SearchManagment: React.FC = observer(({route}) => {
                     <Button marginB-s4 label={'К карте'}></Button>
                 </View>
                     {groups.map((group) => (
-                        <InputModalBlock title={'title'} group={group}></InputModalBlock>
+                        <InputModalBlock group={group} searchId={searchId}></InputModalBlock>
                     ))}
 
                 <View style={detailStyle.buttonContainer}>
                     {/*<Button label={'Изменить группы'} style={detailStyle.flexButton} onPress={()=>{}}></Button>*/}
-                    <Button label={'+'} onPress={()=>{}}></Button>
+                    <Button label={'+'} onPress={addGroup}></Button>
                 </View>
                 {/*edit group on long press (there's rn component for such thing*/}
             </Section>

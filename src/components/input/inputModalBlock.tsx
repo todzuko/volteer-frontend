@@ -1,26 +1,25 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, Button} from 'react-native-ui-lib';
-import {Pressable, StyleSheet, TouchableOpacity, TouchableWithoutFeedback} from "react-native";
+import {Alert, Pressable, StyleSheet, TouchableOpacity, TouchableWithoutFeedback} from "react-native";
 import {InputField} from "./input";
 import {IconButton} from "../iconButton";
 import {OptionSheet} from "./optionSheet";
 import EditUserGroup from "./editUserGroup";
 import OptionSelector from "./optionSelector";
 
-
 interface Props {
     title: string;
     group: any;
+    onSave: (newTitle: string, newMembers: object[]) => void;
+    isNew?: boolean;
 }
-
 // @ts-ignore
-export const InputModalBlock: React.FC<Props> = ({title, group}) => {
+export const InputModalBlock: React.FC<Props> = ({group, searchId}) => {
     const [isVisible, setIsVisible] = useState(false);
-    const [isEditing, setIsEditing] = useState(false);
-    const [showList, setshowList] = useState(false);
-// const [newTitle, setNewTitle] = useState(title);
-// const [newUsers, setNewUsers] = useState(users);
-    const [users, setUsers] = useState<object[]>([]);
+    const [isEditing, setIsEditing] = useState(!group._id);
+    const [title, setTitle] = useState(group['name']);
+    const [users, setUsers] = useState<object[]>(group['members']?? []);
+    const [usersIds, setUsersIds] = useState<string[]>(group['users'].map((item: { [x: string]: any; }) => item['_id']));
     const getUsers = async () => {
         try {
             const response = await fetch('http://192.168.1.103:3000/users/');
@@ -29,32 +28,80 @@ export const InputModalBlock: React.FC<Props> = ({title, group}) => {
         } catch (error) {
         }
     };
-    const selectedOptionIds = group['users'].map((item: { [x: string]: any; }) => item['_id']);
+    const selectedOptionIds = usersIds;
     useEffect(() => {
         getUsers();
     }, []);
     const handleLongPress = () => {
         setIsEditing(true);
     };
+    const handleSave = async () => {
+        // console.log(searchId)
+        let url = 'http://192.168.1.103:3000/groups/';
+        let reqMethod = 'POST';
+        if (group._id && group._id != '0') {
+            url += group._id + '/';
+            reqMethod = 'PATCH'
+        }
+        console.log(reqMethod)
+        console.log(url)
+        console.log ({
+            color: '555555',
+            search: searchId,
+            title: title,
+            members: usersIds
+        })
+        try {
+            const response = await fetch(url, {
+                method: reqMethod,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    color: '555555',
+                    search: searchId,
+                    name: title,
+                    users: usersIds
+                })
+            });
+            setIsEditing(false);
+        } catch (error) {
+            // handle error
+        }
+    }
 
-    // @ts-ignore
-    // @ts-ignore
+    const handleDelete = async () => {
+        try {
+            const response = await fetch(`http://192.168.1.103:3000/groups/${group._id}`, {
+                method: 'DELETE',
+            });
+            // handle success response
+        } catch (error) {
+            // handle error
+        }
+    }
     // @ts-ignore
     return isEditing ? (
             <View style={DropdownStyle.container}>
                 <View style={DropdownStyle.headerContainer}>
                 {/*<View style={DropdownStyle.header}>*/}
                     <TouchableOpacity style={DropdownStyle.title}>
-                        <InputField  value={title} maxLength={20}></InputField>
+                        <InputField  value={title} maxLength={20} onChangeText={(text: React.SetStateAction<string>) => setTitle(text)}></InputField>
                     </TouchableOpacity>
                 {/*</View>*/}
                     <View style={DropdownStyle.headerButtonContainer}>
-                        <IconButton name={'x'} style={DropdownStyle.headerButton} size={16} press={() => {
-                        }} color={'#606060'}></IconButton>
+                        <IconButton name={'x'} style={DropdownStyle.headerButton} size={16} press={handleDelete} color={'#606060'}></IconButton>
                     </View>
                 </View>
-                <OptionSelector onSelection={() => {
+                <OptionSelector onSelection={(selectedOptionsIds) => {
+                    setUsersIds(selectedOptionsIds)
                 }} options={users} selected={selectedOptionIds}></OptionSelector>
+                <View>
+                    <Button style={DropdownStyle.saveButton} label={'cancel'} onPress={() => {
+                        setIsEditing(false)
+                    }}></Button>
+                    <Button style={DropdownStyle.saveButton} label={'save'} onPress={handleSave}></Button>
+                </View>
             </View>
         )
         : (
@@ -148,5 +195,11 @@ const DropdownStyle = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center'
+    },
+    saveButton: {
+        marginTop: 20,
+        paddingVertical: 10,
+        textAlign: 'center',
+        color: 'white'
     }
 });

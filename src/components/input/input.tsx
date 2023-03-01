@@ -8,14 +8,17 @@ type Props = MarginModifiers & {
 };
 
 export const InputField= (props: any) => {
+    let placeholder = props.placeholder;
+    if (props.required) {
+        placeholder += '*';
+    }
     return (
         <TextField
-            placeholder={props.placeholder}
+            placeholder={placeholder}
             floatingPlaceholder
             enableErrors
-            // validate={'required'}
+            validate={props.required}
             // validationMessage={['Обязательное поле']}
-            //showCharCounter
             maxLength={props.maxLength}
             color={'white'}
             labelColor={'white'}

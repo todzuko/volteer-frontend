@@ -1,17 +1,17 @@
-import {Navio} from 'rn-navio';
+import { Navio } from 'rn-navio';
 
-import {Main} from '../base/main';
-import {Playground} from '../base/playground';
-import {Settings} from '../base/settings';
-import {Example} from '../base/_screen-sample';
+import { Main } from '../base/main';
+import { Playground } from '../base/playground';
+import { Settings } from '../base/settings';
+import { Example } from '../base/_screen-sample';
 
-import {useAppearance} from '../../utils/hooks';
-import {screenDefaultOptions, tabDefaultOptions, getTabBarIcon} from '../../utils/designSystem';
-import {Login} from "../base/login";
-import {UserList} from "../user/userList";
-import {UserForm} from "../user/userForm";
-import {SearchList} from "../search/searchList";
-import {SearchForm} from "../search/searchForm";
+import { useAppearance } from '../../utils/hooks';
+import { screenDefaultOptions, tabDefaultOptions, getTabBarIcon } from '../../utils/designSystem';
+import { Login } from "../base/login";
+import { UserList } from "../user/userList";
+import { UserForm } from "../user/userForm";
+import { SearchList } from "../search/searchList";
+import { SearchForm } from "../search/searchForm";
 import { SearchDetail } from '../search/searchDetail';
 import { SearchManagment } from '../search/searchManagment';
 
@@ -42,6 +42,7 @@ export const navio = Navio.build({
     SearchStack: ['SearchList', 'SearchForm', 'SearchDetail', 'SearchManagment'],
     ExampleStack: ['Example'],
     UserStack: ['UserList', 'UserForm'],
+    Login: ['Login']
   },
   tabs: {
     MainTab: {
@@ -52,10 +53,10 @@ export const navio = Navio.build({
       },
     },
     SettingsTab: {
-      stack: ['Settings'],
+      stack: ['Settings', 'Login'],
       options: () => ({
         title: '',
-        tabBarLabel:'test',
+        tabBarLabel: 'test',
         tabBarIcon: getTabBarIcon('SettingsTab'),
       }),
     },

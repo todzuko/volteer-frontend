@@ -11,6 +11,7 @@ import {useServices} from "../../services";
 import {useRoute} from "@react-navigation/native";
 import {DateTimeInput} from "../../components/input/dateTimePicker";
 
+// @ts-ignore
 export const SearchForm: React.FC = observer(({route}) => {
     useAppearance();
     const navigation = useNavigation();
@@ -97,6 +98,7 @@ export const SearchForm: React.FC = observer(({route}) => {
             <InputField
                 placeholder='ФИО'
                 value={name}
+                required={true}
                 onChangeText={(text: React.SetStateAction<string>) => setName(text)}
             />
 
@@ -115,24 +117,28 @@ export const SearchForm: React.FC = observer(({route}) => {
             <InputField
                 placeholder='Место пропажи'
                 value={place}
+                required={true}
                 onChangeText={(text: React.SetStateAction<string>) => setPlace(text)}
             />
 
             <InputField
                 placeholder='Обстоятельства пропажи'
                 value={circumstances}
+                required={true}
                 onChangeText={(text: React.SetStateAction<string>) => setCircumstances(text)}
             />
 
             <InputField
                 placeholder='Одежда'
                 value={clothes}
+                required={true}
                 onChangeText={(text: React.SetStateAction<string>) => setClothes(text)}
             />
 
             <InputField
                 placeholder='Внешность'
                 value={appearance}
+                required={true}
                 onChangeText
                     ={(text: React.SetStateAction<string>) => setAppearance(text)}
             />

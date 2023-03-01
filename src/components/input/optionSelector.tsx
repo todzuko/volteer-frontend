@@ -27,6 +27,7 @@ const OptionSelector = (props: Props) => {
             newSelectedOptions = [...selectedOptions, option];
         }
         setSelectedOptions(newSelectedOptions);
+        props.onSelection(newSelectedOptions);
     };
 
     return (
@@ -47,14 +48,6 @@ const OptionSelector = (props: Props) => {
                     );
                 })}
             </ScrollView>
-            <View>
-                <Button style={styles.saveButton} label={'cancel'} onPress={() => {
-                    console.log(selectedOptions);
-                }}></Button>
-                <Button style={styles.saveButton} label={'save'} onPress={() => {
-                    console.log(selectedOptions);
-                }}></Button>
-            </View>
         </View>
     );
 };

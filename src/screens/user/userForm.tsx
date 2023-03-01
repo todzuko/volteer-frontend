@@ -1,9 +1,3 @@
-//add or edit user
-//name
-//login
-//password
-//roles
-
 import React, {useEffect, useState} from 'react';
 import {Text, View} from 'react-native-ui-lib';
 import {Button} from 'react-native-ui-lib';
@@ -15,21 +9,26 @@ import {Section} from '../../components/section';
 import {useAppearance} from '../../utils/hooks';
 import {InputField} from "../../components/input/input";
 import { Formik } from 'formik';
-import {getNavio} from "../navigation";
 import {Alert, TextInput} from "react-native";
 import {Picker} from "@react-native-picker/picker";
 
-
-export const UserForm: React.FC = observer(() => {
+// @ts-ignore
+export const UserForm: React.FC = observer(({ route }) => {
     useAppearance(); // for Dark Mode
     const navigation = useNavigation();
-    const {t, navio} = useServices();
-    // const {ui} = useStores();
+    const { t, navio } = useServices();
 
-    const [name, setName] = useState('');
-    const [login, setLogin] = useState('');
-    const [password, setPassword] = useState('');
-    const [selectedRole, setSelectedRole] = useState('');
+    const user =  route?.params?.item ?? {
+        name: '',
+        login: '',
+        password: '',
+        role: '',
+    };
+    const [name, setName] = useState(user.name);
+    const [login, setLogin] = useState(user.login);
+    const [password, setPassword] = useState(user.password);
+    const [selectedRole, setSelectedRole] = useState(user.role);
+    const [title, setTitle] = useState('Добавлеие');
 
     const roles = [
         { label: 'Select a role', value: '' },
@@ -37,18 +36,25 @@ export const UserForm: React.FC = observer(() => {
         { label: 'User', value: 'user' },
     ];
 
-    // Methods
+    useEffect(() => {
+        if (route?.params?.item) {
+            setTitle('Редактирование');
+        }
+    }, []);
+
     const handleSubmit = async () => {
         try {
-            const response = await fetch('http://192.168.1.103:3000/users/', {
-                method: 'POST',
+            const url = user ? `http://192.168.1.103:3000/users/${user._id}` : 'http://192.168.1.103:3000/users/';
+            const method = user ? 'PATCH' : 'POST';
+
+            const response = await fetch(url, {
+                method: method,
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ name, login, password, role: selectedRole }),
             });
             const data = await response.json();
-            console.log(data);
 
             Alert.alert(
                 'Success',
@@ -64,31 +70,25 @@ export const UserForm: React.FC = observer(() => {
     };
 
     const push = () => navio.push('UserList');
-    // Start
-    useEffect(() => {
-        configureUI();
-    }, []);
 
-    // UI Methods
     const configureUI = () => {
         navigation.setOptions({});
     };
 
-    // UI Methods
-//admin can assign roles, for user this field is hidden
-    //can admin change password?
-    return (<View flex bg-bgColor>
-        <Formik initialValues={{email: ''}}
-                onSubmit={values => console.log(values)}>
-            <Section title={'Редактирование'}>
+    return (
+        <View flex bg-bgColor>
+            {/*use formik to validate stuff and not send form before validation is true*/}
+            <Section title={title}>
                 <InputField placeholder={'Имя'} value={name}
+                            required={true}
                             onChangeText={(text: React.SetStateAction<string>) => {
                                 setName(text);
                             }} />
                 <InputField placeholder={'Логин'}  value={login}
+                            required={true}
                             onChangeText={(text: React.SetStateAction<string>) => setLogin(text)} />
-                {/*<Text>Change password (link)</Text>*/}
                 <InputField placeholder={'Password'}  value={password}
+                            required={true}
                             onChangeText={(text: React.SetStateAction<string>) => setPassword(text)}
                             secureTextEntry={true} />
                 <Text>Roles:</Text>
@@ -100,10 +100,8 @@ export const UserForm: React.FC = observer(() => {
                         <Picker.Item key={role.value} label={role.label} value={role.value} />
                     ))}
                 </Picker>
-
-                <Button marginV-s4 label={'Сохранить'}  onPress={handleSubmit} />
-                {/*text - forgot password?*/}
+                <Button marginV-s4 label={'Сохранить'} onPress={handleSubmit} />
             </Section>
-        </Formik>
-    </View>);
+        </View>
+    );
 });
