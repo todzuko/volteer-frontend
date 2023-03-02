@@ -45,7 +45,6 @@ export const SearchManagment: React.FC = observer(({route}) => {
         try {
             const response = await fetch('http://192.168.1.103:3000/groups/');
             const json = await response.json();
-            console.log(json);
             setGroups(json);
         } catch (error) {
         }

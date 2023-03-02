@@ -37,7 +37,6 @@ export const SearchDetail: React.FC = observer(({route}) => {
                 throw new Error('Request failed');
             }
             const data = await response.json();
-            console.log(data);
         } catch (error) {
             console.error(error);
         }
@@ -47,7 +46,6 @@ export const SearchDetail: React.FC = observer(({route}) => {
         const parsedBirthday = new Date(Date.parse(searchItem.birthday.replace(/\./g, '/')));
         const parsedLostdate = new Date(Date.parse(searchItem.lostdate.replace(/\./g, '/')));
         const updatedSearchItem = {...searchItem, birthday: parsedBirthday, lostdate: parsedLostdate};
-        console.log(updatedSearchItem);
         navio.push('SearchForm', {updatedSearchItem});
     };
 

@@ -33,9 +33,7 @@ export const SearchList: React.FC = observer(() => {
         try {
             const response = await fetch('http://192.168.1.103:3000/search/');
             const json = await response.json();
-            // console.log(json);
             setData(json);
-            console.log(data);
         } catch (error) {
             console.error(error);
         } finally {

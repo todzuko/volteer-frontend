@@ -64,7 +64,6 @@ export const SearchForm: React.FC = observer(({route}) => {
                 }),
             });
             const data = await response.text();
-            console.log(data);
 
             Alert.alert(
                 'Success',
