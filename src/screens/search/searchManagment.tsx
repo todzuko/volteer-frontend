@@ -16,7 +16,7 @@ export const SearchManagment: React.FC = observer(({route}) => {
     const searchId= route.params.searchId;
     type Group = {
         id: string
-        title: string,
+        name: string,
         users: object[],
         color: string,
     };
@@ -53,13 +53,17 @@ export const SearchManagment: React.FC = observer(({route}) => {
         getGroups();
     }, []);
 
+    const pushMap = () => {
+        navio.push('MapScreen');
+    }
+
 //get groups and pass each one to dropdown
     return (
         <ScrollView>
             <Section title={'Группы'}>
                 {/*need to do so that color of each group would be displayed at the group name as a tag or something*/}
                 <View>
-                    <Button marginB-s4 label={'К карте'}></Button>
+                    <Button marginB-s4 label={'К карте'} onPress={pushMap}></Button>
                 </View>
                     {groups.map((group) => (
                         <InputModalBlock group={group} searchId={searchId}></InputModalBlock>

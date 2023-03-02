@@ -14,6 +14,7 @@ import { SearchList } from "../search/searchList";
 import { SearchForm } from "../search/searchForm";
 import { SearchDetail } from '../search/searchDetail';
 import { SearchManagment } from '../search/searchManagment';
+import { MapScreen } from '../map/mapScreen';
 
 // NAVIO
 
@@ -31,6 +32,7 @@ export const navio = Navio.build({
     SearchForm,
     SearchDetail,
     SearchManagment,
+    MapScreen,
     Playground: {
       component: Playground,
       options: () => ({
@@ -39,7 +41,7 @@ export const navio = Navio.build({
     },
   },
   stacks: {
-    SearchStack: ['SearchList', 'SearchForm', 'SearchDetail', 'SearchManagment'],
+    SearchStack: ['SearchList', 'SearchForm', 'SearchDetail', 'SearchManagment', 'MapScreen'],
     ExampleStack: ['Example'],
     UserStack: ['UserList', 'UserForm'],
     Login: ['Login']
