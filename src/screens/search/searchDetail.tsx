@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, ScrollView} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {observer} from 'mobx-react';
@@ -7,6 +7,7 @@ import {useAppearance} from '../../utils/hooks';
 import {DetailText} from "../../components/detailText";
 import {Button, Colors} from "react-native-ui-lib";
 import {useServices} from "../../services";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // @ts-ignore
 export const SearchDetail: React.FC = observer(({route}) => {
@@ -14,7 +15,16 @@ export const SearchDetail: React.FC = observer(({route}) => {
     const navigation = useNavigation();
     const searchItem = route.params.item;
     const {navio} = useServices();
+
+    const [role, setRole] = useState<String>('user');
+
+    const getRole = async () => {
+        const userRole= await AsyncStorage.getItem('role') ?? '';
+        setRole(userRole)
+    }
+
     useEffect(() => {
+        getRole()
         configureUI();
     }, []);
 
@@ -27,7 +37,6 @@ export const SearchDetail: React.FC = observer(({route}) => {
                 throw new Error('Request failed');
             }
             const data = await response.json();
-            console.log(data);
         } catch (error) {
             console.error(error);
         }
@@ -37,7 +46,6 @@ export const SearchDetail: React.FC = observer(({route}) => {
         const parsedBirthday = new Date(Date.parse(searchItem.birthday.replace(/\./g, '/')));
         const parsedLostdate = new Date(Date.parse(searchItem.lostdate.replace(/\./g, '/')));
         const updatedSearchItem = {...searchItem, birthday: parsedBirthday, lostdate: parsedLostdate};
-        console.log(updatedSearchItem);
         navio.push('SearchForm', {updatedSearchItem});
     };
 
@@ -65,11 +73,12 @@ export const SearchDetail: React.FC = observer(({route}) => {
                     <DetailText title={'Внешность'} value={searchItem.appearance}></DetailText>
                     <DetailText title={'Особые признаки'} value={searchItem.special}></DetailText>
                 </View>
-                <View style={detailStyle.buttonContainer}>
-                    <Button label={'Изменить'} style={detailStyle.flexButton} onPress={pushForm}></Button>
-                    <Button label={'Удалить'} backgroundColor={'#f6637e'} style={detailStyle.flexButton} onPress={handleDelete}></Button>
-                </View>
-
+                { (role === 'admin' || role === 'manager') &&
+                    <View style={detailStyle.buttonContainer}>
+                        <Button label={'Изменить'} style={detailStyle.flexButton} onPress={pushForm}></Button>
+                        <Button label={'Удалить'} backgroundColor={'#f6637e'} style={detailStyle.flexButton} onPress={handleDelete}></Button>
+                    </View>
+                }
                 <Button label={'Скачать ориентировку'}></Button>
             </Section>
         </ScrollView>

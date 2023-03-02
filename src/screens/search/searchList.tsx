@@ -6,6 +6,7 @@ import { useAppearance } from '../../utils/hooks';
 import { randomStr } from '../../utils/help';
 import { ListItem } from '../../components/listItem';
 import { useServices } from '../../services';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const SearchList: React.FC = observer(() => {
     useAppearance();
@@ -26,14 +27,13 @@ export const SearchList: React.FC = observer(() => {
 
     const [isLoading, setLoading] = useState(true);
     const [data, setData] = useState<Search[]>([]);
+    const [role, setRole] = useState<String>('user');
 
     const getSearch = async () => {
         try {
             const response = await fetch('http://192.168.1.103:3000/search/');
             const json = await response.json();
-            // console.log(json);
             setData(json);
-            console.log(data);
         } catch (error) {
             console.error(error);
         } finally {
@@ -41,7 +41,13 @@ export const SearchList: React.FC = observer(() => {
         }
     };
 
+    const getRole = async () => {
+        const userRole = await AsyncStorage.getItem('role') ?? '';
+        setRole(userRole)
+    }
+
     useEffect(() => {
+        getRole()
         getSearch();
     }, []);
 
@@ -49,7 +55,9 @@ export const SearchList: React.FC = observer(() => {
     return (
         <View flex bg-bgColor>
             <Text white>Всего: 10</Text>
-            <Button marginV-s3 marginH-s10 label={'Добавить'} onPress={pushForm}></Button>
+            {(role === 'admin' || role === 'manager') &&
+                <Button marginV-s3 marginH-s10 label={'Добавить'} onPress={pushForm}></Button>
+            }
             <FlashList
                 contentInsetAdjustmentBehavior="always"
                 data={data}

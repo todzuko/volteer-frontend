@@ -122,6 +122,7 @@ export const Settings: NavioScreen = observer(({ navigation, route }: any) => {
           <Button
               onPress={() => {
                 AsyncStorage.setItem('accessToken', '');
+                AsyncStorage.setItem('role', '');
                 setLoggedIn(false)
                 console.log('out')
               }}

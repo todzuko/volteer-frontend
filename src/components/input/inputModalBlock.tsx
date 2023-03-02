@@ -6,6 +6,7 @@ import {IconButton} from "../iconButton";
 import {OptionSheet} from "./optionSheet";
 import EditUserGroup from "./editUserGroup";
 import OptionSelector from "./optionSelector";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface Props {
     title: string;
@@ -18,6 +19,7 @@ export const InputModalBlock: React.FC<Props> = ({group, searchId}) => {
     const [isVisible, setIsVisible] = useState(false);
     const [isEditing, setIsEditing] = useState(!group._id);
     const [title, setTitle] = useState(group['name']);
+    const [role, setRole] = useState('user');
     const [users, setUsers] = useState<object[]>(group['members']?? []);
     const [usersIds, setUsersIds] = useState<string[]>(group['users'].map((item: { [x: string]: any; }) => item['_id']));
     const getUsers = async () => {
@@ -29,11 +31,18 @@ export const InputModalBlock: React.FC<Props> = ({group, searchId}) => {
         }
     };
     const selectedOptionIds = usersIds;
+    const getRole = async () => {
+        const userRole= await AsyncStorage.getItem('role') ?? '';
+        setRole(userRole)
+    }
     useEffect(() => {
+        getRole();
         getUsers();
     }, []);
     const handleLongPress = () => {
-        setIsEditing(true);
+        if (role === 'admin' || role === 'manager') {
+            setIsEditing(true);
+        }
     };
     const handleSave = async () => {
         // console.log(searchId)
