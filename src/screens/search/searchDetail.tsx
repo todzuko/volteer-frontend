@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, ScrollView} from 'react-native';
+import {View, Text, StyleSheet, ScrollView, Alert} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {observer} from 'mobx-react';
 import {Section} from '../../components/section';
@@ -9,6 +9,8 @@ import {Button, Colors} from "react-native-ui-lib";
 import {useServices} from "../../services";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+import * as MediaLibrary from 'expo-media-library';
+import * as FileSystem from 'expo-file-system';
 // @ts-ignore
 export const SearchDetail: React.FC = observer(({route}) => {
     useAppearance();
@@ -57,6 +59,27 @@ export const SearchDetail: React.FC = observer(({route}) => {
         navigation.setOptions({});
     };
 
+
+    const downloadImage = async () => {
+        try {
+            const { status } = await MediaLibrary.requestPermissionsAsync();
+            if (status === "granted") {
+                const {uri} = await FileSystem.downloadAsync(
+                    'http://192.168.1.103:3000/search/image/',
+                    FileSystem.documentDirectory + 'your-image-name.jpg'
+                );
+                const asset = await MediaLibrary.createAssetAsync(uri);
+                //// await MediaLibrary.saveToLibraryAsync(asset.uri);
+
+
+
+                Alert.alert('Image saved to camera roll!');
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     return (
         <ScrollView>
             <Section title={searchItem.name}>
@@ -79,7 +102,7 @@ export const SearchDetail: React.FC = observer(({route}) => {
                         <Button label={'Удалить'} backgroundColor={'#f6637e'} style={detailStyle.flexButton} onPress={handleDelete}></Button>
                     </View>
                 }
-                <Button label={'Скачать ориентировку'}></Button>
+                <Button label={'Скачать ориентировку'} onPress={downloadImage}></Button>
             </Section>
         </ScrollView>
     );
