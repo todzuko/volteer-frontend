@@ -14,7 +14,9 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "io.batyr.expo-starter"
@@ -22,9 +24,11 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
+        "backgroundColor": "#303034"
       },
-      "package": "io.batyr.expostarter"
+      "package": "io.batyr.expostarter",
+      "permissions": [    "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",  "MEDIA_LIBRARY"]
     },
     "web": {
       "favicon": "./assets/favicon.png"
