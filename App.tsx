@@ -16,6 +16,7 @@ import {useAppearance} from './src/utils/hooks';
 import {Login} from './src/screens/base/login';
 import {AppRoot} from './src/screens/navigation';
 import VContext from "./VContext";
+import * as Location from 'expo-location';
 
 LogBox.ignoreLogs(['Require']);
 
@@ -36,6 +37,17 @@ export default () => {
 
         setReady(true);
         await SplashScreen.hideAsync();
+    }, []);
+
+    useEffect(() => {
+        (async () => {
+
+            let { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== 'granted') {
+                let { status } = await Location.requestForegroundPermissionsAsync();
+                return;
+            }
+        })();
     }, []);
 
     useEffect(() => {
