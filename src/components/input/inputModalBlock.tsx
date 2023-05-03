@@ -6,6 +6,7 @@ import {IconButton} from "../iconButton";
 import {OptionSheet} from "./optionSheet";
 import EditUserGroup from "./editUserGroup";
 import OptionSelector from "./optionSelector";
+import {ColorPicker} from "./colorPicker";
 
 interface Props {
     title: string;
@@ -13,10 +14,11 @@ interface Props {
     onSave: (newTitle: string, newMembers: object[]) => void;
     isNew?: boolean;
 }
-// @ts-ignore
-export const InputModalBlock: React.FC<Props> = ({group, searchId}) => {
+
+export const InputModalBlock: React.FC<Props> = ({group, searchId} ) => {
     const [isVisible, setIsVisible] = useState(false);
     const [isEditing, setIsEditing] = useState(!group._id);
+    const [color, setColor] = useState(group.color && group.color !== '' ? group.color :  '#848467');
     const [title, setTitle] = useState(group['name']);
     const [users, setUsers] = useState<object[]>(group['members']?? []);
     const [usersIds, setUsersIds] = useState<string[]>(group['users'].map((item: { [x: string]: any; }) => item['_id']));
@@ -46,7 +48,7 @@ export const InputModalBlock: React.FC<Props> = ({group, searchId}) => {
         console.log(reqMethod)
         console.log(url)
         console.log ({
-            color: '555555',
+            color: color,
             search: searchId,
             title: title,
             members: usersIds
@@ -58,7 +60,7 @@ export const InputModalBlock: React.FC<Props> = ({group, searchId}) => {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    color: '555555',
+                    color: color,
                     search: searchId,
                     name: title,
                     users: usersIds
@@ -84,14 +86,16 @@ export const InputModalBlock: React.FC<Props> = ({group, searchId}) => {
     return isEditing ? (
             <View style={DropdownStyle.container}>
                 <View style={DropdownStyle.headerContainer}>
-                {/*<View style={DropdownStyle.header}>*/}
                     <TouchableOpacity style={DropdownStyle.title}>
                         <InputField  value={title} maxLength={20} onChangeText={(text: React.SetStateAction<string>) => setTitle(text)}></InputField>
                     </TouchableOpacity>
-                {/*</View>*/}
                     <View style={DropdownStyle.headerButtonContainer}>
                         <IconButton name={'x'} style={DropdownStyle.headerButton} size={16} press={handleDelete} color={'#606060'}></IconButton>
                     </View>
+                </View>
+
+                <View style={DropdownStyle.colorPicker}>
+                    <ColorPicker selectedColor={color} onSelectColor={setColor} />
                 </View>
                 <OptionSelector onSelection={(selectedOptionsIds) => {
                     setUsersIds(selectedOptionsIds)
@@ -110,6 +114,7 @@ export const InputModalBlock: React.FC<Props> = ({group, searchId}) => {
                     <Pressable style={DropdownStyle.arrowHeader} onLongPress={handleLongPress}
                                onPress={() => setIsVisible(!isVisible)}>
                         {/*<View style={DropdownStyle.color}></View>*/}
+                        <View style={[DropdownStyle.circle, {backgroundColor: color}]} />
                         <Text style={DropdownStyle.title} value={title}>{title}</Text>
                         <Text style={DropdownStyle.arrow}>
                             {isVisible ? '▲' : '▼'}
@@ -119,6 +124,7 @@ export const InputModalBlock: React.FC<Props> = ({group, searchId}) => {
                     {isVisible && (
                         <View>
                             <View style={DropdownStyle.line}></View>
+
                             {group['users'].map((member: { [x: string]: any; }) => (
                                 <Text style={DropdownStyle.member} key={member['name']}>
                                     {member['name']}
@@ -201,5 +207,16 @@ const DropdownStyle = StyleSheet.create({
         paddingVertical: 10,
         textAlign: 'center',
         color: 'white'
-    }
+    },
+    circle: {
+        width: 15,
+        height: 15,
+        borderRadius: 20,
+        marginRight: 10,
+    },
+    colorPicker: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
 });
