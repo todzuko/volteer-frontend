@@ -13,6 +13,7 @@ export const SearchManagment: React.FC = observer(({route}) => {
     useAppearance();
     const navigation = useNavigation();
     const [groups, setGroups] = useState<Group[]>([]);
+    const [color, setColor] = useState('#FFFFFF');
     const searchId= route.params.searchId;
     type Group = {
         id: string
@@ -66,7 +67,7 @@ export const SearchManagment: React.FC = observer(({route}) => {
                     <Button marginB-s4 label={'К карте'} onPress={pushMap}></Button>
                 </View>
                     {groups.map((group) => (
-                        <InputModalBlock group={group} searchId={searchId}></InputModalBlock>
+                        <InputModalBlock key={group.id} group={group} searchId={searchId} ></InputModalBlock>
                     ))}
 
                 <View style={detailStyle.buttonContainer}>
