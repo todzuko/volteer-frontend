@@ -50,7 +50,7 @@ export const UserList: React.FC = observer(() => {
     const pushForm = () => navio.push('UserForm');
     return (
         <View flex bg-bgColor>
-            <Text>Всего: 10</Text>
+            {/*<Text>Всего: 10</Text>*/}
             <Button marginV-s3 marginH-s10 label={'Добавить'} onPress={pushForm}></Button>
             <FlashList
                 contentInsetAdjustmentBehavior="always"

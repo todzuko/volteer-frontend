@@ -3,13 +3,12 @@ import {Text, View} from 'react-native-ui-lib';
 import {Button} from 'react-native-ui-lib';
 import {observer} from 'mobx-react';
 import {useNavigation} from '@react-navigation/native';
-
 import {services, useServices} from '../../services';
 import {Section} from '../../components/section';
 import {useAppearance} from '../../utils/hooks';
 import {InputField} from "../../components/input/input";
 import { Formik } from 'formik';
-import {Alert, TextInput} from "react-native";
+import {Alert, StyleSheet, TextInput} from "react-native";
 import {Picker} from "@react-native-picker/picker";
 
 // @ts-ignore
@@ -69,6 +68,20 @@ export const UserForm: React.FC = observer(({ route }) => {
         }
     };
 
+    const handleDelete = async () => {
+        try {
+            const response = await fetch('http://192.168.1.103:3000/users/' + user.id, {
+                method: 'DELETE',
+            });
+            if (!response.ok) {
+                throw new Error('Request failed');
+            }
+            const data = await response.json();
+            console.log(data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
     const push = () => navio.push('UserList');
 
     const configureUI = () => {
@@ -100,8 +113,24 @@ export const UserForm: React.FC = observer(({ route }) => {
                         <Picker.Item key={role.value} label={role.label} value={role.value} />
                     ))}
                 </Picker>
-                <Button marginV-s4 label={'Сохранить'} onPress={handleSubmit} />
+                <Button marginV-s4 marginH-s1 label={'Сохранить'} onPress={handleSubmit} />
+                <View style={detailStyle.buttonContainer}>
+                    <Button label={'Изменить'} style={detailStyle.flexButton} onPress={handleSubmit}></Button>
+                    <Button label={'Удалить'} backgroundColor={'#f6637e'} style={detailStyle.flexButton} onPress={handleDelete}></Button>
+                </View>
             </Section>
         </View>
     );
 });
+
+
+const detailStyle = StyleSheet.create({
+    buttonContainer: {
+        flexDirection: 'row',
+    },
+    flexButton: {
+        flex: 1,
+        marginHorizontal: 4
+    }
+});
+
