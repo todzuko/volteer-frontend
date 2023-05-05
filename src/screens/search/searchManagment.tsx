@@ -42,9 +42,8 @@ export const SearchManagment: React.FC = observer(({route}) => {
 
     const getGroups = async () => {
         try {
-            const response = await fetch('http://192.168.1.103:3000/groups/');
+            const response = await fetch('http://192.168.1.103:3000/groups/search/' + searchId);
             const json = await response.json();
-            console.log(json);
             setGroups(json);
         } catch (error) {
         }
@@ -55,14 +54,13 @@ export const SearchManagment: React.FC = observer(({route}) => {
     }, []);
 
     const pushMap = () => {
-        navio.push('MapScreen');
+        navio.push('MapScreen', {searchId});
     }
 
 //get groups and pass each one to dropdown
     return (
         <ScrollView>
             <Section title={'Группы'}>
-                {/*need to do so that color of each group would be displayed at the group name as a tag or something*/}
                 <View>
                     <Button marginB-s4 label={'К карте'} onPress={pushMap}></Button>
                 </View>
@@ -71,10 +69,8 @@ export const SearchManagment: React.FC = observer(({route}) => {
                     ))}
 
                 <View style={detailStyle.buttonContainer}>
-                    {/*<Button label={'Изменить группы'} style={detailStyle.flexButton} onPress={()=>{}}></Button>*/}
                     <Button label={'+'} onPress={addGroup}></Button>
                 </View>
-                {/*edit group on long press (there's rn component for such thing*/}
             </Section>
         </ScrollView>
     );

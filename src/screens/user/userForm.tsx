@@ -77,7 +77,6 @@ export const UserForm: React.FC = observer(({ route }) => {
                 throw new Error('Request failed');
             }
             const data = await response.json();
-            console.log(data);
         } catch (error) {
             console.error(error);
         }

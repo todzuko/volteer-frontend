@@ -26,14 +26,25 @@ export const SearchList: React.FC = observer(() => {
 
     const [isLoading, setLoading] = useState(true);
     const [data, setData] = useState<Search[]>([]);
+    const [count, setCount] = useState(0);
 
     const getSearch = async () => {
         try {
             const response = await fetch('http://192.168.1.103:3000/search/');
             const json = await response.json();
-            // console.log(json);
             setData(json);
-            console.log(data);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const getSearchCount = async () => {
+        try {
+            const response = await fetch('http://192.168.1.103:3000/search/count/');
+            const json = await response.json();
+            setCount(json);
         } catch (error) {
             console.error(error);
         } finally {
@@ -48,7 +59,7 @@ export const SearchList: React.FC = observer(() => {
     const pushForm = () => navio.push('SearchForm');
     return (
         <View flex bg-bgColor>
-            <Text white>Всего: 10</Text>
+            <Text marginV-s3  white>Всего: 10</Text>
             <Button marginV-s3 marginH-s10 label={'Добавить'} onPress={pushForm}></Button>
             <FlashList
                 contentInsetAdjustmentBehavior="always"

@@ -18,8 +18,6 @@ import { MapScreen } from '../map/mapScreen';
 
 // NAVIO
 
-console.log(getTabBarIcon('MainTab'))
-// @ts-ignore
 export const navio = Navio.build({
   screens: {
     Main,

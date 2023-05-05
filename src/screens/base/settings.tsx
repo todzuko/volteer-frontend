@@ -123,7 +123,6 @@ export const Settings: NavioScreen = observer(({ navigation, route }: any) => {
               onPress={() => {
                 AsyncStorage.setItem('accessToken', '');
                 setLoggedIn(false)
-                console.log('out')
               }}
               label="Logout"
               color={Colors.red20}

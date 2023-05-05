@@ -21,7 +21,6 @@ export const GroupsModal: React.FC = observer(({route, isVisible, onSelectGroup 
         try {
             const response = await fetch('http://192.168.1.103:3000/groups/');
             const json = await response.json();
-            console.log(json);
             setGroups(json);
         } catch (error) {
         }

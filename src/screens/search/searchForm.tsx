@@ -37,6 +37,7 @@ export const SearchForm: React.FC = observer(({route}) => {
     const [appearance, setAppearance] = useState(searchItem.appearance);
     const [special, setSpecial] = useState(searchItem.special);
     const [photos, setPhotos] = useState<string[]>(searchItem.photos);
+    const [image, setImage] = useState(null);
 
     let url = 'http://192.168.1.103:3000/search/';
     let reqMethod = 'POST';
@@ -46,26 +47,31 @@ export const SearchForm: React.FC = observer(({route}) => {
     }
     const handleSubmit = async () => {
         try {
+            const formData = new FormData();
+            formData.append('name', name);
+            formData.append('birthday', birthday.toISOString());
+            formData.append('lostdate', lostdate.toISOString());
+            formData.append('place', place);
+            formData.append('circumstances', circumstances);
+            formData.append('clothes', clothes);
+            formData.append('appearance', appearance);
+            formData.append('special', special);
+            photos.forEach((photo, index) => {
+                const filename = `photo_${index}.jpg`;
+                formData.append('photos', {
+                    uri: photo,
+                    name: filename,
+                    type: 'image/jpeg',
+                });
+            });
             const response = await fetch(url, {
                 method: reqMethod,
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'multipart/form-data',
                 },
-                body: JSON.stringify({
-                    name,
-                    birthday,
-                    lostdate,
-                    place,
-                    circumstances,
-                    clothes,
-                    appearance,
-                    special,
-                    // photos,
-                }),
+                body: formData,
             });
             const data = await response.text();
-            console.log(data);
-
             Alert.alert(
                 'Success',
                 'Your report was successfully submitted.',
@@ -82,14 +88,30 @@ export const SearchForm: React.FC = observer(({route}) => {
         }
     };
 
+    // const pickImage = async () => {
+    //     const result = await ImagePicker.launchImageLibraryAsync({
+    //         allowsEditing: true,
+    //     });
+    //
+    //     if (!result.cancelled) {
+    //         // @ts-ignore
+    //         setPhotos([...photos, result.uri]);
+    //         console.log(photos)
+    //         console.log(result.assets)
+    //     }
+    // };
+
     const pickImage = async () => {
-        const result = await ImagePicker.launchImageLibraryAsync({
+        // No permissions request is necessary for launching the image library
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
             allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
         });
 
         if (!result.cancelled) {
-            // @ts-ignore
-            setPhotos([...photos, result.uri]);
+            setImage(result.assets[0].uri);
         }
     };
 
@@ -148,14 +170,20 @@ export const SearchForm: React.FC = observer(({route}) => {
                 onChangeText={(text: React.SetStateAction<string>) => setSpecial(text)}
             />
 
-            {/*<Button label='Добавить фото' onPress={pickImage} marginV-s3 />*/}
+            <Button label='Добавить фото' onPress={pickImage} marginV-s3 />
 
-            {/*{photos.map((photo, index) => (*/}
-            {/*    <Image key={index} source={{ uri: photo }}*/}
-            {/*           // style={{ width: 200, height: 200 }}*/}
-            {/*    />*/}
-            {/*))}*/}
-
+            {photos.map((photo, index) => (
+                <Image key={index} source={{ uri: photo }}
+                       style={{ width: 200, height: 200 }}
+                />
+            ))}
+            {photos.map((photo, index) => (
+                <Image key={index} source={{ uri: photo }} style={{ width: 200, height: 200 }} />
+            ))}
+            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                <Button title="Pick an image from camera roll" onPress={pickImage} />
+                {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
+            </View>
             <Button
                 marginV-s3
                 label='Сохранить'

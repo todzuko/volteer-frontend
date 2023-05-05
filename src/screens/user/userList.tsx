@@ -34,7 +34,6 @@ export const UserList: React.FC = observer(() => {
             });
             const json = await response.json();
             setData(json);
-            console.log(data);
         } catch (error) {
             console.error(error);
         } finally {

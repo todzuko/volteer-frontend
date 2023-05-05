@@ -13,6 +13,7 @@ interface Props {
     group: any;
     onSave: (newTitle: string, newMembers: object[]) => void;
     isNew?: boolean;
+    searchId: string;
 }
 
 export const InputModalBlock: React.FC<Props> = ({group, searchId} ) => {
@@ -38,21 +39,12 @@ export const InputModalBlock: React.FC<Props> = ({group, searchId} ) => {
         setIsEditing(true);
     };
     const handleSave = async () => {
-        // console.log(searchId)
         let url = 'http://192.168.1.103:3000/groups/';
         let reqMethod = 'POST';
         if (group._id && group._id != '0') {
             url += group._id + '/';
             reqMethod = 'PATCH'
         }
-        console.log(reqMethod)
-        console.log(url)
-        console.log ({
-            color: color,
-            search: searchId,
-            title: title,
-            members: usersIds
-        })
         try {
             const response = await fetch(url, {
                 method: reqMethod,
@@ -63,7 +55,7 @@ export const InputModalBlock: React.FC<Props> = ({group, searchId} ) => {
                     color: color,
                     search: searchId,
                     name: title,
-                    users: usersIds
+                    users: usersIds,
                 })
             });
             setIsEditing(false);

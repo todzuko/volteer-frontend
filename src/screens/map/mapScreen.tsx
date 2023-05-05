@@ -5,13 +5,15 @@ import {Button, Image, Picker} from "react-native-ui-lib";
 import * as Location from 'expo-location';
 import {useServices} from "../../services";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { GroupModal } from '../../components/input/groupModal';
 
 
-export const MapScreen = () => {
+export const MapScreen = ({searchId}) => {
     const polygonRef = useRef(null);
     const polygonsRef = useRef([]);
     const [groups, setGroups] = useState<Group[]>([]);
     const [selectedGroup, setSelectedGroup] = useState(groups[0]);
+    const [selectedColor, setSelectedColor] = useState('#121255');
     const [polygonsCoords, setPolygonsCoords] = useState([
         [
             { latitude: 57.1525259, longitude: 65.5611431 },
@@ -26,7 +28,27 @@ export const MapScreen = () => {
             { latitude: 57.145588, longitude: 65.58476},
         ],
     ]);
-    const [mapCenter, serMapCenter] = useState({
+    const [polygons, setPolygons] = useState([
+        {
+            coords: [
+                {latitude: 57.1525259, longitude: 65.5611431},
+                {latitude: 57.1496386, longitude: 65.551646},
+                {latitude: 57.147555, longitude: 65.558339},
+                {latitude: 57.1521849, longitude: 65.5681232},
+            ],
+            color: '#121212',
+        },
+        {
+            coords: [
+                {latitude: 57.149977, longitude: 65.577986},
+                {latitude: 57.147553, longitude: 65.573245},
+                {latitude: 57.144388, longitude: 65.57987},
+                {latitude: 57.145588, longitude: 65.58476},
+            ],
+            color: '#685004',
+        },
+    ]);
+    const [mapCenter,  setMapCenter] = useState({
         latitude: 57.1553,
         longitude: 65.5619,
         latitudeDelta: 0.05,
@@ -67,7 +89,10 @@ export const MapScreen = () => {
             }
         );
     };
-
+    const handleRegionChange = (region) => {
+        const { latitude, longitude } = region;
+        setMapCenter({ latitude, longitude, latitudeDelta: 0.05, longitudeDelta: 0.05 });
+    };
     type Group = {
         id: string
         name: string,
@@ -79,7 +104,6 @@ export const MapScreen = () => {
         try {
             const response = await fetch('http://192.168.1.103:3000/groups/');
             const json = await response.json();
-            console.log(json);
             setGroups(json);
         } catch (error) {
         }
@@ -88,47 +112,46 @@ export const MapScreen = () => {
     const getPolygons = async () => {
         try {
             //get user role if not managaer or admin, get group polygons. else - all
-            let url = 'http://192.168.1.103:3000/polygons/';
-            if (role !== 'admin' || role !== 'manager') {
-                let userGroup = getUserGroup()
-                url += 'group/' + userGroup.id;
-            }
+            let url = 'http://192.168.1.103:3000/polygons/search/' + searchId;
+            // if (role !== 'admin' || role !== 'manager') {
+            //     let userGroup = getUserGroup()
+            //     url += 'group/' + userGroup.id;
+            // }
                 const response = await fetch(url);
             const json = await response.json();
-            console.log(json);
             setGroups(json);
         } catch (error) {
         }
     };
 
-    const getUserGroup = async () => {
-        try {
-            const response = await fetch('http://192.168.1.103:3000/groups/search/'+ searchItem.id + '/user/' + userId);
-            const json = await response.json();
-            console.log(json);
-            setGroups(json);
-        } catch (error) {
-        }
-    };
+    // const getUserGroup = async () => {
+    //     try {
+    //         const response = await fetch('http://192.168.1.103:3000/groups/search/'+ searchItem.id + '/user/' + userId);
+    //         const json = await response.json();
+    //         setGroups(json);
+    //     } catch (error) {
+    //     }
+    // };
 
-    const [markerCoords, setMarkerCoords] = useState(polygonsCoords);
+    const [markerCoords, setMarkerCoords] = useState(polygons.map(obj => obj.coords));
     const [isEditing, setIsEditing] = useState(false);
+    const [isActive, setIsActive] = useState(false);
 
     const onMarkerDrag = (polygonIndex: number, markerIndex: number, newCoords: { latitude: number; longitude: number; }) => {
-        const newPolygonsCoords = polygonsCoords.map((polygon, i) => {
+        const newPolygons = polygons.map((polygon, i) => {
             if (i !== polygonIndex) {
                 // This is not the polygon we're updating, so return it unchanged
                 return polygon;
             }
 
             // This is the polygon we're updating, so create a copy and update the marker coordinates
-            const newPolygon = [...polygon];
-            newPolygon[markerIndex] = newCoords;
+            const newCoordsArray = [...polygon.coords];
+            newCoordsArray[markerIndex] = newCoords;
+            const newPolygon = {...polygon, coords: newCoordsArray};
             return newPolygon;
         });
 
-        setPolygonsCoords(newPolygonsCoords);
-        setMarkerCoords(newPolygonsCoords);
+        setPolygons(newPolygons);
     };
 
     const onPolygonPress = (e, polygonIndex) => {
@@ -136,69 +159,81 @@ export const MapScreen = () => {
             return;
         }
         const { coordinate } = e.nativeEvent;
-        const newPolygonsCoords = [...polygonsCoords];
-        const polygonCoords = newPolygonsCoords[polygonIndex];
-        const deltaX = coordinate.latitude - polygonCoords[0].latitude;
-        const deltaY = coordinate.longitude - polygonCoords[0].longitude;
-        const newMarkerCoords = polygonCoords.map((coords) => ({
+        const newPolygons = [...polygons];
+        const polygon = newPolygons[polygonIndex];
+        const deltaX = coordinate.latitude - polygon.coords[0].latitude;
+        const deltaY = coordinate.longitude - polygon.coords[0].longitude;
+        const newCoords = polygon.coords.map((coords) => ({
             latitude: coords.latitude + deltaX,
             longitude: coords.longitude + deltaY,
         }));
-        newPolygonsCoords[polygonIndex] = newMarkerCoords;
-        setPolygonsCoords(newPolygonsCoords);
+        newPolygons[polygonIndex] = {
+            ...polygon,
+            coords: newCoords,
+        };
+        setPolygons(newPolygons);
     };
 
-    const onMapPanDrag = (e) => {
-        if (!isEditing) {
-            return;
+    const getGroupColor = async (groupId: string): Promise<string> => {
+        try {
+            const response = await fetch('http://192.168.1.103:3000/groups/' + groupId);
+            const json = await response.json()
+            return json.color;
+        } catch (error) {
+            return ''; // or some default color value
         }
-        const { coordinate } = e.nativeEvent;
-        // const newPolygonCoords = [...polygonCoords];
-        // const deltaX = coordinate.latitude - newPolygonCoords[0].latitude;
-        // const deltaY = coordinate.longitude - newPolygonCoords[0].longitude;
-        // for (let i = 0; i < newPolygonCoords.length; i++) {
-        //     newPolygonCoords[i] = {
-        //         latitude: newPolygonCoords[i].latitude + deltaX,
-        //         longitude: newPolygonCoords[i].longitude + deltaY,
-        //     };
-        // }
-        // setPolygonCoords(newPolygonCoords);
-        // setMarkerCoords(newPolygonCoords);
     };
 
-    function handleAddPolygon(selectedGroup: { id: string; name: string; users: object[]; color: string; }) {
+
+    async function handleAddPolygon(selectedGroup) {
+        let color = await getGroupColor(selectedGroup.value);
         const size = 0.006;
         const distance = size / 2;
-        let newPolygon = [
-            { latitude: mapCenter.latitude + distance/2, longitude: mapCenter.longitude + distance },
-            { latitude: mapCenter.latitude - distance/2, longitude: mapCenter.longitude + distance },
-            { latitude: mapCenter.latitude - distance/2, longitude: mapCenter.longitude - distance },
-            { latitude: mapCenter.latitude + distance/2, longitude: mapCenter.longitude - distance },
-        ];
-        let polygons = polygonsCoords;
-        polygons.push(newPolygon)
-        setPolygonsCoords(polygons)
-        setMarkerCoords(polygons)
+        let newPolygon =
+            {
+                coords: [
+                    {latitude: mapCenter.latitude + distance / 2, longitude: mapCenter.longitude + distance},
+                    {latitude: mapCenter.latitude - distance / 2, longitude: mapCenter.longitude + distance},
+                    {latitude: mapCenter.latitude - distance / 2, longitude: mapCenter.longitude - distance},
+                    {latitude: mapCenter.latitude + distance / 2, longitude: mapCenter.longitude - distance},
+                ],
+                color: color
+            };
+        let allPolygons = polygons;
+        allPolygons.push(newPolygon)
+        setPolygons(allPolygons)
+        setMarkerCoords(allPolygons.map(obj => obj.coords))
     }
 
     const toggleEditing = () => {
         setIsEditing(!isEditing);
+    }
+    const toggleActive = () => {
+        setIsActive(!isActive);
     }
 
     const toggleModal = () => {
         setIsModalOpen(!isModalOpen);
     };
 
-    function getPolygonColor(opacity: number): string {
-        let hex = selectedGroup === undefined || selectedGroup.color === undefined ? '#33f693' : selectedGroup.color;
-        hex = hex.replace('#', '');
-        const r = parseInt(hex.substring(0, 2), 16);
-        const g = parseInt(hex.substring(2, 4), 16);
-        const b = parseInt(hex.substring(4, 6), 16);
-        return `rgba(${r},${g},${b},${opacity})`;
+    const handlePick = (group) => {
+        setSelectedGroup(group);
+        handleAddPolygon(selectedGroup);
     }
 
-    // @ts-ignore
+    function hexToRgbA(hex){
+        var c;
+        if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
+            c= hex.substring(1).split('');
+            if(c.length== 3){
+                c= [c[0], c[0], c[1], c[1], c[2], c[2]];
+            }
+            c= '0x'+c.join('');
+            return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+',0.5)';
+        }
+        throw new Error('Bad Hex');
+    }
+
     // @ts-ignore
     return (
         <View style={styles.container}>
@@ -206,17 +241,15 @@ export const MapScreen = () => {
                 style={styles.map}
                 initialRegion={mapCenter}
                 scrollEnabled={!isEditing}
-// onPanDrag
-                onPanDrag={onMapPanDrag}
+                onRegionChange={handleRegionChange}
             >
-                {polygonsCoords.map((coords, index) => (
+                {polygons.map((coords, index) => (
                     <Polygon
                         key={index}
-                        coordinates={coords}
-                        fillColor={getPolygonColor(0.7)}
+                        coordinates={coords['coords']}
+                        fillColor={hexToRgbA(coords['color'])}
                         strokeWidth={2}
-                        strokeColor={'#c7c9f0'}
-                        // onPress={onPolygonPress}
+                        strokeColor={coords['color']}
                     />
                 ))}
 
@@ -250,34 +283,31 @@ export const MapScreen = () => {
                 )}
             </MapView>
 
-            <View style={styles.buttonContainer}>
+            <View>
 
-                <Picker
-                    selectedValue={selectedGroup}
-                    onValueChange={(itemValue: React.SetStateAction<{ id: string; name: string; users: object[]; color: string; }>, itemIndex: any) =>
-                        setSelectedGroup(itemValue)
-                    }>
-                    {groups.map(group => (
-                        <Picker.Item label={group.name} value={group.id} key={group.id} />
-                    ))}
-                </Picker>
-                <Button label="Add" onPress={() => handleAddPolygon(selectedGroup)} />
+                {isEditing &&
+                <View style={styles.buttonContainer}>
+                    <Button onPress={toggleEditing}>
+                        <Text>{isEditing ? 'Done' : 'Edit'}</Text>
+                    </Button>
+                    <GroupModal data={groups} onPick={handlePick}></GroupModal>
+                    {/*<Button onPress={toggleModal}>*/}
+                    {/*    <Text>Add polygons</Text>*/}
+                    {/*</Button>*/}
+                    {/*<Button>*/}
+                    {/*    <Text>Delete</Text>*/}
+                    {/*</Button>*/}
+                </View>}
+                {!isEditing &&
+                <View style={styles.buttonContainer}>
+                    <Button onPress={toggleEditing}>
+                        <Text>{isEditing ? 'Done' : 'Edit'}</Text>
+                    </Button>
+                    <Button onPress={toggleActive}>
+                        <Text>{isActive ? 'Finish' : 'Start'}</Text>
+                    </Button>
+                </View>}
 
-                <Button onPress={toggleEditing}>
-                    <Text>{isEditing ? 'Done' : 'Edit'}</Text>
-                </Button>
-                <Button onPress={toggleModal}>
-                    <Text>Add polygons</Text>
-                </Button>
-                <Button>
-                    <Text>Delete</Text>
-                </Button>
-                <Button>
-                    <Text>Start</Text>
-                </Button>
-                <Button>
-                    <Text>Finish</Text>
-                </Button>
             </View>
         </View>
     );

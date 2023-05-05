@@ -29,7 +29,6 @@ export const Login: React.FC = observer(() => {
             });
 
             const data = await response.json();
-            console.log(data); // do something with the response data
             if (data.error) {
                 setError(data.error);
             } else {
