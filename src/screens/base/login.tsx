@@ -33,6 +33,7 @@ export const Login: React.FC = observer(() => {
                 setError(data.error);
             } else {
                 await AsyncStorage.setItem('accessToken', data.accessToken);
+                await AsyncStorage.setItem('role', data.role);
                 setLoggedIn(true); // update the loggedIn value
             }
         } catch (error) {
