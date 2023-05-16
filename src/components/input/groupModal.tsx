@@ -24,40 +24,37 @@ export const GroupModal = ({data, onPick}) => {
   };
 
   return (
-    <View style={styles.container}>
-      <MapView style={styles.map} />
-
-      <Button  onPress={handleAddButtonPress} label={'Add'}>
+      <View style={styles.container}>
+        {/*<MapView style={styles.map} />*/}
+        <Picker
+            value={selectedGroup}
+            onChange={handleGroupSelect} // Call the local function that updates the selected group and calls onPick
+            style={{margin: 0, padding: 0, backgrounDolor: '#eeefee'}}
+            placeholder="Select group"
+        >
+          {groups.length > 0 && groups.map(group => (
+              <Picker.Item label={group.name} value={group._id} key={group._id} />
+          ))}
+        </Picker>
+        <Button style={styles.addButton} onPress={handleAddButtonPress} label={'Add'}>
       </Button>
-          <Picker
-              value={selectedGroup}
-              onChange={onPick}
-              hideUnderline
-              marginB-20
-              placeholder="Select group"
-          >
-            {groups.map(group => (
-                <Picker.Item label={group.name} value={group._id} key={group._id} />
-            ))}
-          </Picker>
-    </View>
+      </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    // flex: 1,
+    flexDirection: "column",
+    marginHorizontal: 15,
   },
   map: {
     flex: 1,
   },
   addButton: {
     position: 'absolute',
-    bottom: 20,
-    right: 20,
-    backgroundColor: 'green',
-    padding: 10,
-    borderRadius: 10,
+    top: 45,
+    height: 40
   },
   addButtonText: {
     color: 'white',
@@ -65,13 +62,8 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 20,
   },
   modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 10,
   },
 });
 

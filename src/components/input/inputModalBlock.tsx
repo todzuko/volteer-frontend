@@ -7,6 +7,7 @@ import {OptionSheet} from "./optionSheet";
 import EditUserGroup from "./editUserGroup";
 import OptionSelector from "./optionSelector";
 import {ColorPicker} from "./colorPicker";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface Props {
     title: string;
@@ -21,6 +22,7 @@ export const InputModalBlock: React.FC<Props> = ({group, searchId} ) => {
     const [isEditing, setIsEditing] = useState(!group._id);
     const [color, setColor] = useState(group.color && group.color !== '' ? group.color :  '#848467');
     const [title, setTitle] = useState(group['name']);
+    const [role, setRole] = useState('user');
     const [users, setUsers] = useState<object[]>(group['members']?? []);
     const [usersIds, setUsersIds] = useState<string[]>(group['users'].map((item: { [x: string]: any; }) => item['_id']));
     const getUsers = async () => {
@@ -32,7 +34,13 @@ export const InputModalBlock: React.FC<Props> = ({group, searchId} ) => {
         }
     };
     const selectedOptionIds = usersIds;
+    const getRole = async () => {
+        const userRole= await AsyncStorage.getItem('role') ?? '';
+        setRole(userRole)
+    }
     useEffect(() => {
+        getRole();
+        console.log(group)
         getUsers();
     }, []);
     const handleLongPress = () => {
@@ -58,6 +66,8 @@ export const InputModalBlock: React.FC<Props> = ({group, searchId} ) => {
                     users: usersIds,
                 })
             });
+
+            console.log(usersIds)
             setIsEditing(false);
         } catch (error) {
             // handle error

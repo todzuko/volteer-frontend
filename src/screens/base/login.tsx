@@ -40,6 +40,16 @@ export const Login: React.FC = observer(() => {
         }
     };
 
+    useEffect(() => {
+        const checkLoggedIn = async () => {
+            const accessToken = await AsyncStorage.getItem('accessToken');
+            if (accessToken) {
+                setLoggedIn(true);
+            }
+        };
+        checkLoggedIn();
+    }, []);
+
     if (loggedIn) {
         // show the protected routes if the user is logged in
         return <AppRoot navigationContainerProps={{ theme: getNavigationTheme() }} />;

@@ -10,6 +10,7 @@ import {useAppearance} from "../../utils/hooks";
 import {useServices} from "../../services";
 import {useRoute} from "@react-navigation/native";
 import {DateTimeInput} from "../../components/input/dateTimePicker";
+import {PhotoThumbnail} from "../../components/input/photoThumbnail";
 
 // @ts-ignore
 export const SearchForm: React.FC = observer(({route}) => {
@@ -38,6 +39,8 @@ export const SearchForm: React.FC = observer(({route}) => {
     const [special, setSpecial] = useState(searchItem.special);
     const [photos, setPhotos] = useState<string[]>(searchItem.photos);
     const [image, setImage] = useState(null);
+    const [imagePreview, setImagePreview] = useState(null);
+    const [police, setPolice] = useState('');
 
     let url = 'http://192.168.1.103:3000/search/';
     let reqMethod = 'POST';
@@ -56,13 +59,18 @@ export const SearchForm: React.FC = observer(({route}) => {
             formData.append('clothes', clothes);
             formData.append('appearance', appearance);
             formData.append('special', special);
-            photos.forEach((photo, index) => {
-                const filename = `photo_${index}.jpg`;
-                formData.append('photos', {
+
+            const photoData = photos.map((photo, index) => {
+                let filename = photo.split('/').pop();
+                return {
                     uri: photo,
                     name: filename,
                     type: 'image/jpeg',
-                });
+                };
+            });
+
+            photoData.forEach((photo) => {
+                formData.append('photos', photo);
             });
             const response = await fetch(url, {
                 method: reqMethod,
@@ -88,26 +96,12 @@ export const SearchForm: React.FC = observer(({route}) => {
         }
     };
 
-    // const pickImage = async () => {
-    //     const result = await ImagePicker.launchImageLibraryAsync({
-    //         allowsEditing: true,
-    //     });
-    //
-    //     if (!result.cancelled) {
-    //         // @ts-ignore
-    //         setPhotos([...photos, result.uri]);
-    //         console.log(photos)
-    //         console.log(result.assets)
-    //     }
-    // };
-
     const pickImage = async () => {
-        // No permissions request is necessary for launching the image library
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.All,
             allowsEditing: true,
-            aspect: [4, 3],
             quality: 1,
+            multiple: true
         });
 
         if (!result.cancelled) {
@@ -169,20 +163,25 @@ export const SearchForm: React.FC = observer(({route}) => {
                 value={special}
                 onChangeText={(text: React.SetStateAction<string>) => setSpecial(text)}
             />
+  <InputField
+                placeholder='Контакты полиции'
+                value={police}
+                onChangeText={(text: React.SetStateAction<string>) => setPolice(text)}
+            />
 
             <Button label='Добавить фото' onPress={pickImage} marginV-s3 />
-
-            {photos.map((photo, index) => (
-                <Image key={index} source={{ uri: photo }}
-                       style={{ width: 200, height: 200 }}
-                />
-            ))}
-            {photos.map((photo, index) => (
-                <Image key={index} source={{ uri: photo }} style={{ width: 200, height: 200 }} />
-            ))}
-            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                <Button title="Pick an image from camera roll" onPress={pickImage} />
-                {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
+            <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
+                {photos.map((photo, index) => (
+                    <PhotoThumbnail
+                        key={index}
+                        uri={photo}
+                        onDelete={() => {
+                            const newPhotos = [...photos];
+                            newPhotos.splice(index, 1);
+                            setPhotos(newPhotos);
+                        }}
+                    />
+                ))}
             </View>
             <Button
                 marginV-s3

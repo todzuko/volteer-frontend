@@ -31,7 +31,8 @@ export const UserForm: React.FC = observer(({ route }) => {
 
     const roles = [
         { label: 'Select a role', value: '' },
-        { label: 'Admin', value: 'admin' },
+        { label: 'admin', value: 'admin' },
+        { label: 'manager', value: 'manager' },
         { label: 'User', value: 'user' },
     ];
 
@@ -43,15 +44,14 @@ export const UserForm: React.FC = observer(({ route }) => {
 
     const handleSubmit = async () => {
         try {
-            const url = user ? `http://192.168.1.103:3000/users/${user._id}` : 'http://192.168.1.103:3000/users/';
-            const method = user ? 'PATCH' : 'POST';
-
+            const url = user._id ? `http://192.168.1.103:3000/users/${user._id}` : 'http://192.168.1.103:3000/users/';
+            const method = user._id ? 'PATCH' : 'POST';
             const response = await fetch(url, {
                 method: method,
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ name, login, password, role: selectedRole }),
+                body: JSON.stringify({ name: name, login: login, password: password, role: selectedRole }),
             });
             const data = await response.json();
 
@@ -112,9 +112,8 @@ export const UserForm: React.FC = observer(({ route }) => {
                         <Picker.Item key={role.value} label={role.label} value={role.value} />
                     ))}
                 </Picker>
-                <Button marginV-s4 marginH-s1 label={'Сохранить'} onPress={handleSubmit} />
                 <View style={detailStyle.buttonContainer}>
-                    <Button label={'Изменить'} style={detailStyle.flexButton} onPress={handleSubmit}></Button>
+                    <Button label={'Сохранить'} style={detailStyle.flexButton} onPress={handleSubmit}></Button>
                     <Button label={'Удалить'} backgroundColor={'#f6637e'} style={detailStyle.flexButton} onPress={handleDelete}></Button>
                 </View>
             </Section>
